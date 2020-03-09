@@ -1,8 +1,14 @@
 <?php
 declare(strict_types = 1);
 
-namespace T3G\AgencyPack\Usercentrics\Hooks;
+/*
+ * This file is part of the package t3g/usercentrics.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
 
+namespace T3G\AgencyPack\Usercentrics\Hooks;
 
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -37,7 +43,7 @@ class PageRendererPreProcess
     protected function addConfiguredJsFiles(array $jsFiles): void
     {
         foreach ($jsFiles as $jsFile) {
-            if(!$this->isValidFile($jsFile)) {
+            if (!$this->isValidFile($jsFile)) {
                 throw new \InvalidArgumentException('No valid file given, please check TypoScript configuration.', 1583774682);
             }
             if (!$this->isValidIdentifier($jsFile)) {
@@ -69,7 +75,6 @@ class PageRendererPreProcess
         }
         return $options;
     }
-
 
     protected function getAttributesForUsercentrics(array $attributes, string $identifier): array
     {
