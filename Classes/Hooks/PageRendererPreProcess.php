@@ -31,15 +31,12 @@ class PageRendererPreProcess
             throw new \InvalidArgumentException('Usercentrics ID not configured, please set plugin.tx_usercentrics.id in your TypoScript configuration', 1583774571);
         }
         $this->addUserCentricsScript($config['id']);
-        $this->addConfiguredJsFiles($config['jsFiles.']);
+        $this->addConfiguredJsFiles($config['jsFiles.'] ?? []);
     }
 
-    /**
-     * @param $jsFiles
-     */
-    protected function addConfiguredJsFiles($jsFiles): void
+    protected function addConfiguredJsFiles(array $jsFiles): void
     {
-        foreach ($jsFiles ?? [] as $jsFile) {
+        foreach ($jsFiles as $jsFile) {
             if(!$this->isValidFile($jsFile)) {
                 throw new \InvalidArgumentException('No valid file given, please check TypoScript configuration.', 1583774682);
             }
@@ -64,10 +61,6 @@ class PageRendererPreProcess
         ]);
     }
 
-    /**
-     * @param array $options
-     * @return array
-     */
     protected function convertPriorityToBoolean(array $options): array
     {
         if (!empty($options['priority'])) {
