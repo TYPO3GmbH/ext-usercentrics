@@ -4,14 +4,14 @@ declare(strict_types = 1);
 namespace T3G\AgencyPack\Usercentrics\Hooks;
 
 
-use TYPO3\CMS\Core\Page\AssetCollector;
+use T3G\AgencyPack\Usercentrics\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PageRendererPreProcess
 {
 
     /**
-     * @var \TYPO3\CMS\Core\Page\AssetCollector
+     * @var AssetCollector
      */
     private $assetCollector;
 

@@ -13,4 +13,7 @@ if (!defined('TYPO3_MODE')) {
 call_user_func(function () {
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][\T3G\AgencyPack\Usercentrics\Hooks\PageRendererPreProcess::class]
         = \T3G\AgencyPack\Usercentrics\Hooks\PageRendererPreProcess::class . '->addLibrary';
+
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-postProcess'][\T3G\AgencyPack\Usercentrics\Hooks\PageRendererPostProcess::class]
+        = \T3G\AgencyPack\Usercentrics\Hooks\PageRendererPostProcess::class . '->render';
 });
