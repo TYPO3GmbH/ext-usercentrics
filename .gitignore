@@ -1,0 +1,24 @@
+# PHPStorm
+.idea
+
+# OSX
+.DS_Store
+
+# Composer
+vendor/
+bin/
+logs/
+composer.lock
+
+# Build stuff
+.build/
+.ddev/**/*.example
+.ddev/**/*.txt
+.ddev/commands/
+Build/.phpunit.result.cache
+node_modules/
+var/
+config/
+
+# CGL Fixer
+.php_cs.cache

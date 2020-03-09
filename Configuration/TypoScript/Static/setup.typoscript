@@ -1,0 +1,6 @@
+plugin.tx_usercentrics {
+    jsFiles {
+        # superb JS Files array
+    }
+}
+

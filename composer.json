@@ -1,0 +1,75 @@
+{
+    "name": "t3g/usercentrics",
+    "description": "This extension provides a usercentrics integration into TYPO3.",
+    "type": "typo3-cms-extension",
+    "license": "GPL-2.0-or-later",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "authors": [
+        {
+            "name": "TYPO3 GmbH",
+            "role": "Developer",
+            "homepage": "https://typo3.com/"
+        }
+    ],
+    "homepage": "https://extensions.typo3.org/extension/usercentrics/",
+    "support": {
+        "issues": "https://github.com/TYPO3GmbH/ext-usercentrics/issues",
+        "docs": "https://docs.typo3.org/typo3cms/extensions/usercentrics/",
+        "source": "https://github.com/TYPO3GmbH/ext-usercentrics"
+    },
+    "autoload": {
+        "psr-4": {
+            "T3G\\AgencyPack\\Usercentrics\\": "Classes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "T3G\\AgencyPack\\Usercentrics\\Tests\\": "Tests/"
+        }
+    },
+    "config": {
+        "bin-dir": ".build/bin",
+        "discard-changes": true,
+        "optimize-autoloader": true,
+        "vendor-dir": ".build/vendor"
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "usercentrics",
+            "web-dir": ".build/web",
+            "app-dir": ".build"
+        }
+    },
+    "scripts": {
+        "t3g:test:php:lint": [
+            "phplint"
+        ],
+        "t3g:test:php:unit": [
+            "phpunit -c Build/UnitTests.xml"
+        ],
+        "t3g:test": [
+            "@t3g:test:php:lint",
+            "@t3g:test:php:unit"
+        ],
+        "t3g:cgl": [
+            "php-cs-fixer --diff -v fix"
+        ],
+        "post-autoload-dump": [
+            "mkdir -p .build/web/typo3conf/ext/",
+            "[ -L .build/web/typo3conf/ext/usercentrics ] || ln -snvf ../../../../. .build/web/typo3conf/ext/usercentrics"
+        ]
+    },
+    "require": {
+        "php": "^7.2",
+        "ext-json": "*",
+        "typo3/cms-core": "^9.5.5 || 10.*@dev"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "roave/security-advisories": "dev-master",
+        "typo3/testing-framework": "^4.9 || ^5.0",
+        "bk2k/extension-helper": "^1.0",
+        "overtrue/phplint": "^1.1"
+    }
+}
