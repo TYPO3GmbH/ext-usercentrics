@@ -21,16 +21,12 @@ use TYPO3\CMS\Core\Utility\ArrayUtility;
 /**
  * The Asset Collector is responsible for keeping track of
  * - everything within <script> tags: javascript files and inline javascript code
- * - inline CSS and CSS files
  *
  * The goal of the asset collector is to:
  * - utilize a single "runtime-based" store for adding assets of certain kinds that are added to the output
  * - allow to deal with assets from non-cacheable plugins and cacheable content in the Frontend
  * - reduce the "power" and flexibility (I'd say it's a burden) of the "god class" PageRenderer.
  * - reduce the burden of storing everything in PageRenderer
- *
- * As a side-effect this allows to:
- * - Add a single CSS snippet or CSS file per content block, but assure that the CSS is only added once to the output.
  *
  * Note on the implementation:
  * - We use a Singleton to make use of the AssetCollector throughout Frontend process (similar to PageRenderer).
@@ -50,20 +46,6 @@ class AssetCollector implements SingletonInterface
      */
     protected $inlineJavaScripts = [];
 
-    /**
-     * @var array
-     */
-    protected $styleSheets = [];
-
-    /**
-     * @var array
-     */
-    protected $inlineStyleSheets = [];
-
-    /**
-     * @var array
-     */
-    protected $media = [];
 
     public function addJavaScript(string $identifier, string $source, array $attributes, array $options = []): self
     {
@@ -93,53 +75,6 @@ class AssetCollector implements SingletonInterface
         return $this;
     }
 
-    public function addStyleSheet(string $identifier, string $source, array $attributes, array $options = []): self
-    {
-        $existingAttributes = $this->styleSheets[$identifier]['attributes'] ?? [];
-        ArrayUtility::mergeRecursiveWithOverrule($existingAttributes, $attributes);
-        $existingOptions = $this->styleSheets[$identifier]['options'] ?? [];
-        ArrayUtility::mergeRecursiveWithOverrule($existingOptions, $options);
-        $this->styleSheets[$identifier] = [
-            'source' => $source,
-            'attributes' => $existingAttributes,
-            'options' => $existingOptions
-        ];
-        return $this;
-    }
-
-    public function addInlineStyleSheet(string $identifier, string $source, array $attributes, array $options = []): self
-    {
-        $existingAttributes = $this->inlineStyleSheets[$identifier]['attributes'] ?? [];
-        ArrayUtility::mergeRecursiveWithOverrule($existingAttributes, $attributes);
-        $existingOptions = $this->inlineStyleSheets[$identifier]['options'] ?? [];
-        ArrayUtility::mergeRecursiveWithOverrule($existingOptions, $options);
-        $this->inlineStyleSheets[$identifier] = [
-            'source' => $source,
-            'attributes' => $existingAttributes,
-            'options' => $existingOptions
-        ];
-        return $this;
-    }
-
-    /**
-     * @param string $fileName
-     * @param array $additionalInformation One dimensional hash map (array with non numerical keys) with scalar values
-     * @return AssetCollector
-     */
-    public function addMedia(string $fileName, array $additionalInformation): self
-    {
-        $existingAdditionalInformation = $this->media[$fileName] ?? [];
-        ArrayUtility::mergeRecursiveWithOverrule($existingAdditionalInformation, $this->ensureAllValuesAreSerializable($additionalInformation));
-        $this->media[$fileName] = $existingAdditionalInformation;
-        return $this;
-    }
-
-    private function ensureAllValuesAreSerializable(array $additionalInformation): array
-    {
-        // Currently just filtering all non scalar values
-        return array_filter($additionalInformation, 'is_scalar');
-    }
-
     public function removeJavaScript(string $identifier): self
     {
         unset($this->javaScripts[$identifier]);
@@ -152,29 +87,6 @@ class AssetCollector implements SingletonInterface
         return $this;
     }
 
-    public function removeStyleSheet(string $identifier): self
-    {
-        unset($this->styleSheets[$identifier]);
-        return $this;
-    }
-
-    public function removeInlineStyleSheet(string $identifier): self
-    {
-        unset($this->inlineStyleSheets[$identifier]);
-        return $this;
-    }
-
-    public function removeMedia(string $identifier): self
-    {
-        unset($this->media[$identifier]);
-        return $this;
-    }
-
-    public function getMedia(): array
-    {
-        return $this->media;
-    }
-
     public function getJavaScripts(): array
     {
         return $this->javaScripts;
@@ -185,13 +97,4 @@ class AssetCollector implements SingletonInterface
         return $this->inlineJavaScripts;
     }
 
-    public function getStyleSheets(): array
-    {
-        return $this->styleSheets;
-    }
-
-    public function getInlineStyleSheets(): array
-    {
-        return $this->inlineStyleSheets;
-    }
 }

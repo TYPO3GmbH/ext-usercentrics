@@ -52,25 +52,6 @@ class AssetRenderer
         return $this->render($assets, $template, $priority);
     }
 
-    public function renderInlineStyleSheets($priority = false): string
-    {
-        $template = '<style%attributes%>%source%</style>';
-        $assets = $this->assetCollector->getInlineStyleSheets();
-        return $this->render($assets, $template, $priority);
-    }
-
-    public function renderStyleSheets(bool $priority = false, string $endingSlash = ''): string
-    {
-        $template = '<link%attributes% ' . $endingSlash . '>';
-        $assets = $this->assetCollector->getStyleSheets();
-        foreach ($assets as &$assetData) {
-            $assetData['attributes']['href'] = $this->getAbsoluteWebPath($assetData['source']);
-            $assetData['attributes']['rel'] = $assetData['attributes']['rel'] ?? 'stylesheet';
-            $assetData['attributes']['type'] = $assetData['attributes']['type'] ?? 'text/css';
-        }
-        return $this->render($assets, $template, $priority);
-    }
-
     protected function render(array $assets, string $template, bool $priority = false): string
     {
         $results = [];
