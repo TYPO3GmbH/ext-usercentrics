@@ -23,7 +23,7 @@ class PageRendererPreProcess
 
     public function addLibrary(&$params, &$pagerenderer): void
     {
-        $this->assetCollector->addJavaScript('usercentrics', '//app.usercentrics.eu/latest/main.js', [
+        $this->assetCollector->addJavaScript('usercentrics', 'https://app.usercentrics.eu/latest/main.js', [
             'type' => 'application/javascript',
             'id' => 'getMeFromTypoScript'
         ]);
