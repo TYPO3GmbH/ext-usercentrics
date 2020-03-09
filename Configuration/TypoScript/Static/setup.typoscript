@@ -1,6 +1,18 @@
 plugin.tx_usercentrics {
+    id = somethingSomething
     jsFiles {
         # superb JS Files array
+        10.file = myScriptFile.js
+        10.identifier = superscript
+
+        20.file = secondFile.js
+        20.identifier = anotherscript
+        20.attributes {
+            async = async
+        }
+        20.options {
+            priority = 1
+        }
     }
 }
 
