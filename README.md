@@ -19,7 +19,7 @@ This extension integrates Usercentrics (Compliance and Consent Management) into 
 
 ```
 plugin.tx_usercentrics {
-    id = <your-id>
+    id = {$plugin.tx_usercentrics.id}
     jsFiles {
 
         # Path to JS File (required)
@@ -42,9 +42,48 @@ plugin.tx_usercentrics {
             priority = 1
         }
     }
+
+    jsInline {
+      10.value (
+        alert(123);
+      )
+      10.identifier = MyIdentifier
+      10.attributes {
+        custom = attribute
+      }
+    }
 }
 ```
 
 Note that the configured identifiers need to match your Usercentrics configuration.
 
 You do not need to set the `type` or `data-usercentrics` attributes for the script tags, the extension will handle that for you.
+
+## Usage in Fluid
+
+The extension comes with a custom view helper which can be used to add scripts via Fluid:
+
+```html
+<usercentrics:script identifier="identifier123" src="EXT:my_ext/Resources/Public/JavaScript/foo.js" />
+<usercentrics:script identifier="identifier123">
+   alert('hello world');
+</usercentrics:script>
+```
+
+## Integrate Usercentrics with PHP
+
+Since TYPO3 v10 the AssetCollector is part of the TYPO3 Core API. To add scripts managed by Usercentrics via PHP, replace your previous calls to the `PageRenderer` with `AssetCollector` calls and make sure to
+set the attributes `type=text/plain` and `data-usercentrics=identifer`.
+
+Example:
+
+```
+    $identifier = MyScript;
+    $file = 'EXT:site/Resources/Public/JavaScript/Scripts.js';
+    $attributes = [
+        'type' => 'text/plain',
+        'data-usercentrics' => $identifier
+    ];
+    $assetCollector = GeneralUtility::makeInstance(AssetCollector::class);
+    $assetCollector->addJavaScript($identifier, $file, $attributes);
+```

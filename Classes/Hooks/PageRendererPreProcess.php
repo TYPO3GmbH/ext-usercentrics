@@ -36,8 +36,23 @@ class PageRendererPreProcess
         if (!$this->isValidId($config)) {
             throw new \InvalidArgumentException('Usercentrics ID not configured, please set plugin.tx_usercentrics.id in your TypoScript configuration', 1583774571);
         }
-        $this->addUserCentricsScript($config['id']);
+        $this->addUsercentricsScript($config['id']);
         $this->addConfiguredJsFiles($config['jsFiles.'] ?? []);
+        $this->addConfiguredInlineJavaScript($config['jsInline.'] ?? []);
+    }
+
+    protected function addConfiguredInlineJavaScript(array $jsInline): void
+    {
+        foreach ($jsInline as $inline) {
+            $code = $inline['value'] ?? '';
+            if (!$this->isValidIdentifier($inline)) {
+                throw new \InvalidArgumentException('No valid identifier given for inline JS, please check TypoScript configuration.', 1583774685);
+            }
+            $identifier = $inline['identifier'];
+            $attributes = $this->getAttributesForUsercentrics($inline['attributes.'] ?? [], $identifier);
+            $options = $this->convertPriorityToBoolean($inline['options.'] ?? []);
+            $this->assetCollector->addInlineJavaScript($identifier, $code, $attributes, $options);
+        }
     }
 
     protected function addConfiguredJsFiles(array $jsFiles): void
@@ -56,10 +71,7 @@ class PageRendererPreProcess
         }
     }
 
-    /**
-     * @param $id
-     */
-    protected function addUserCentricsScript($id): void
+    protected function addUsercentricsScript(string $id): void
     {
         $this->assetCollector->addJavaScript('usercentrics', 'https://app.usercentrics.eu/latest/main.js', [
             'type' => 'application/javascript',
@@ -91,21 +103,17 @@ class PageRendererPreProcess
         return $ts['plugin.']['tx_usercentrics.'] ?? null;
     }
 
-    protected function isValidFile($jsFile): bool
+    protected function isValidFile(array $jsFile): bool
     {
         return isset($jsFile['file']) && is_string($jsFile['file']);
     }
 
-    /**
-     * @param array $config
-     * @return bool
-     */
     protected function isValidId(array $config): bool
     {
         return isset($config['id']) && is_string($config['id']);
     }
 
-    protected function isValidIdentifier($jsFile): bool
+    protected function isValidIdentifier(array $jsFile): bool
     {
         return isset($jsFile['identifier']) && is_string($jsFile['identifier']);
     }
