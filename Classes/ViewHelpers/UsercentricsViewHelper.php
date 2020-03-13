@@ -1,5 +1,13 @@
 <?php
 declare(strict_types = 1);
+
+/*
+ * This file is part of the package t3g/usercentrics.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 namespace T3G\AgencyPack\Usercentrics\ViewHelpers;
 
 /*
@@ -15,9 +23,7 @@ namespace T3G\AgencyPack\Usercentrics\ViewHelpers;
  * The TYPO3 project - inspiring people to share!
  */
 
-use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Fluid\ViewHelpers\Asset\ScriptViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 /**
  * Usercentrics Viewhelper
@@ -34,7 +40,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
  */
 class UsercentricsViewHelper extends ScriptViewHelper
 {
-
     public function render(): string
     {
         $identifier = $this->arguments['identifier'];

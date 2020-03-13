@@ -27,7 +27,7 @@ class PageRendererPreProcess
         $this->assetCollector = $assetCollector ?? GeneralUtility::makeInstance(AssetCollector::class);
     }
 
-    public function addLibrary(&$params, &$pagerenderer): void
+    public function addLibrary(): void
     {
         $config = $this->getTypoScriptConfiguration();
         if ($config === null) {
