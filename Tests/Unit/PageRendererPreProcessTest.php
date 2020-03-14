@@ -12,7 +12,7 @@ namespace T3G\AgencyPack\Usercentrics\Tests\Unit;
 
 use Prophecy\Argument;
 use T3G\AgencyPack\Usercentrics\Hooks\PageRendererPreProcess;
-use TYPO3\CMS\Core\Page\AssetCollector;
+use T3G\AgencyPack\Usercentrics\Page\AssetCollector;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
@@ -22,7 +22,7 @@ class PageRendererPreProcessTest extends UnitTestCase
     protected $templateService;
     protected $assetCollector;
 
-    protected function setUp(): void
+    protected function setUp()
     {
         parent::setUp();
         $tsfeProphecy = $this->prophesize(TypoScriptFrontendController::class);
@@ -37,7 +37,7 @@ class PageRendererPreProcessTest extends UnitTestCase
     /**
      * @test
      */
-    public function addLibraryThrowsExceptionIfUsercentricsIdIsNotSet(): void
+    public function addLibraryThrowsExceptionIfUsercentricsIdIsNotSet()
     {
         $this->templateService->setup = [
             'plugin.' => [
@@ -57,7 +57,7 @@ class PageRendererPreProcessTest extends UnitTestCase
     /**
      * @test
      */
-    public function addLibraryAddsMainUsercentricsScript(): void
+    public function addLibraryAddsMainUsercentricsScript()
     {
         $this->templateService->setup = [
             'plugin.' => [
@@ -79,7 +79,7 @@ class PageRendererPreProcessTest extends UnitTestCase
     /**
      * @test
      */
-    public function addLibraryThrowsExceptionIfNoIdentifierGivenForFile(): void
+    public function addLibraryThrowsExceptionIfNoIdentifierGivenForFile()
     {
         $this->templateService->setup = [
             'plugin.' => [
@@ -103,7 +103,7 @@ class PageRendererPreProcessTest extends UnitTestCase
     /**
      * @test
      */
-    public function addLibraryThrowsExceptionIfNoFileGiven(): void
+    public function addLibraryThrowsExceptionIfNoFileGiven()
     {
         $this->templateService->setup = [
             'plugin.' => [
@@ -126,7 +126,7 @@ class PageRendererPreProcessTest extends UnitTestCase
     /**
      * @test
      */
-    public function addLibraryAddsConfiguredFileWithAttributes(): void
+    public function addLibraryAddsConfiguredFileWithAttributes()
     {
         $file = 'EXT:site/Resources/Public/JavaScript/test.js';
         $identifier = 'myIdentifier';
@@ -161,7 +161,7 @@ class PageRendererPreProcessTest extends UnitTestCase
     /**
      * @test
      */
-    public function addLibraryAddsConfiguredFileWithAttributesAndOptions(): void
+    public function addLibraryAddsConfiguredFileWithAttributesAndOptions()
     {
         $file = 'EXT:site/Resources/Public/JavaScript/test.js';
         $identifier = 'myIdentifier';
@@ -202,7 +202,7 @@ class PageRendererPreProcessTest extends UnitTestCase
     /**
      * @test
      */
-    public function addLibraryThrowsExceptionIfNoIdentifierGivenForInlineJs(): void
+    public function addLibraryThrowsExceptionIfNoIdentifierGivenForInlineJs()
     {
         $this->templateService->setup = [
             'plugin.' => [
@@ -226,7 +226,7 @@ class PageRendererPreProcessTest extends UnitTestCase
     /**
      * @test
      */
-    public function addLibraryAddsInlineJsWithAttributesAndOptions(): void
+    public function addLibraryAddsInlineJsWithAttributesAndOptions()
     {
         $value = 'alert(123);';
         $identifier = 'myIdentifier';

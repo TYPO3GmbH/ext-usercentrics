@@ -28,7 +28,7 @@ class PageRendererPreProcess
         $this->assetCollector = $assetCollector ?? GeneralUtility::makeInstance(AssetCollector::class);
     }
 
-    public function addLibrary(): void
+    public function addLibrary()
     {
         $config = $this->getTypoScriptConfiguration();
         if ($config === null) {
@@ -42,7 +42,7 @@ class PageRendererPreProcess
         $this->addConfiguredInlineJavaScript($config['jsInline.'] ?? []);
     }
 
-    protected function addConfiguredInlineJavaScript(array $jsInline): void
+    protected function addConfiguredInlineJavaScript(array $jsInline)
     {
         foreach ($jsInline as $inline) {
             $code = $inline['value'] ?? '';
@@ -56,7 +56,7 @@ class PageRendererPreProcess
         }
     }
 
-    protected function addConfiguredJsFiles(array $jsFiles): void
+    protected function addConfiguredJsFiles(array $jsFiles)
     {
         foreach ($jsFiles as $jsFile) {
             if (!$this->isValidFile($jsFile)) {
@@ -72,7 +72,7 @@ class PageRendererPreProcess
         }
     }
 
-    protected function addUsercentricsScript(string $id): void
+    protected function addUsercentricsScript(string $id)
     {
         $this->assetCollector->addJavaScript('usercentrics', 'https://app.usercentrics.eu/latest/main.js', [
             'type' => 'application/javascript',
@@ -96,9 +96,9 @@ class PageRendererPreProcess
         return $attributes;
     }
 
-    protected function getTypoScriptConfiguration(): ?array
+    protected function getTypoScriptConfiguration()
     {
-        if (!isset($GLOBALS['TSFE']) || !($GLOBALS['TSFE'] instanceof TypoScriptFrontendController)){
+        if (!isset($GLOBALS['TSFE']) || !($GLOBALS['TSFE'] instanceof TypoScriptFrontendController)) {
             return null;
         }
         /** @var \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController $tsfe */

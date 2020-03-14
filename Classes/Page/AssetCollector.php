@@ -1,5 +1,13 @@
 <?php
 declare(strict_types = 1);
+
+/*
+ * This file is part of the package t3g/usercentrics.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 namespace T3G\AgencyPack\Usercentrics\Page;
 
 /*
@@ -45,7 +53,6 @@ class AssetCollector implements SingletonInterface
      * @var array
      */
     protected $inlineJavaScripts = [];
-
 
     public function addJavaScript(string $identifier, string $source, array $attributes, array $options = []): self
     {
@@ -96,5 +103,4 @@ class AssetCollector implements SingletonInterface
     {
         return $this->inlineJavaScripts;
     }
-
 }
