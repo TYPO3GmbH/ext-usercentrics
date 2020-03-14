@@ -22,3 +22,6 @@ config/
 
 # CGL Fixer
 .php_cs.cache
+
+# PHP Lint
+.phplint.cache

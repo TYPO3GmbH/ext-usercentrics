@@ -22,7 +22,7 @@ class PageRendererPreProcessTest extends UnitTestCase
     protected $templateService;
     protected $assetCollector;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $tsfeProphecy = $this->prophesize(TypoScriptFrontendController::class);
