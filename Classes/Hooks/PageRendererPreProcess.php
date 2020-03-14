@@ -12,6 +12,7 @@ namespace T3G\AgencyPack\Usercentrics\Hooks;
 
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class PageRendererPreProcess
 {
@@ -97,6 +98,9 @@ class PageRendererPreProcess
 
     protected function getTypoScriptConfiguration(): ?array
     {
+        if (!isset($GLOBALS['TSFE']) || !($GLOBALS['TSFE'] instanceof TypoScriptFrontendController)){
+            return null;
+        }
         /** @var \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController $tsfe */
         $tsfe = $GLOBALS['TSFE'];
         $ts = $tsfe->tmpl->setup;
