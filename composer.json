@@ -64,7 +64,7 @@
         ]
     },
     "require": {
-        "php": "^7.2",
+        "php": "^7.0",
         "ext-json": "*",
         "typo3/cms-core": "10.*@dev"
     },
