@@ -98,7 +98,7 @@ class PageRendererPreProcess
 
     protected function getTypoScriptConfiguration(): ?array
     {
-        if (!isset($GLOBALS['TSFE']) || !($GLOBALS['TSFE'] instanceof TypoScriptFrontendController)){
+        if (!isset($GLOBALS['TSFE']) || !($GLOBALS['TSFE'] instanceof TypoScriptFrontendController)) {
             return null;
         }
         /** @var \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController $tsfe */
