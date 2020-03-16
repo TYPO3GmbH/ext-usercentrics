@@ -23,8 +23,6 @@ namespace T3G\AgencyPack\Usercentrics\ViewHelpers;
  * The TYPO3 project - inspiring people to share!
  */
 
-use TYPO3\CMS\Fluid\ViewHelpers\Asset\ScriptViewHelper;
-
 /**
  * Usercentrics Viewhelper
  *
@@ -38,7 +36,7 @@ use TYPO3\CMS\Fluid\ViewHelpers\Asset\ScriptViewHelper;
  *       alert('hello world');
  *    </usercentrics:script>
  */
-class UsercentricsViewHelper extends ScriptViewHelper
+class ScriptViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Asset\ScriptViewHelper
 {
     public function render(): string
     {
