@@ -23,6 +23,8 @@ namespace T3G\AgencyPack\Usercentrics\ViewHelpers;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Utility\StringUtility;
+
 /**
  * Usercentrics Viewhelper
  *
@@ -31,8 +33,8 @@ namespace T3G\AgencyPack\Usercentrics\ViewHelpers;
  *
  * ::
  *
- *    <usercentrics:script identifier="identifier123" src="EXT:my_ext/Resources/Public/JavaScript/foo.js" />
- *    <usercentrics:script identifier="identifier123">
+ *    <usercentrics:script dataServiceProcessor="Data Service" src="EXT:my_ext/Resources/Public/JavaScript/foo.js" />
+ *    <usercentrics:script dataServiceProcessor="Data Service">
  *       alert('hello world');
  *    </usercentrics:script>
  */
@@ -40,10 +42,11 @@ class ScriptViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Asset\ScriptViewHelp
 {
     public function render(): string
     {
-        $identifier = $this->arguments['identifier'];
+        $dataServiceProcessor = $this->arguments['dataServiceProcessor'];
+        $identifier = StringUtility::getUniqueId($dataServiceProcessor . '-');
         $attributes = $this->tag->getAttributes();
         $attributes['type'] = 'text/plain';
-        $attributes['data-usercentrics'] = $identifier;
+        $attributes['data-usercentrics'] = $dataServiceProcessor;
         $src = $this->tag->getAttribute('src');
         unset($attributes['src']);
         $options = [
