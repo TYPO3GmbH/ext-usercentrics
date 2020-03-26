@@ -11,7 +11,7 @@ The foundation of the Usercentrics for TYPO3 Integration is the TYPO3's `Asset C
 This extensions offers multiple entry points to integrate external scripts and inline scripts guarded by Usercentrics.
 
 .. important::
-   Each include requires an identifier which must match the consent name as configured in Usercentrics.
+   Each include requires an identifier which must match the data processing service name as configured in Usercentrics.
 
 
 TypoScript
@@ -25,7 +25,7 @@ configured in :typoscript:`plugin.tx_usercentrics.jsInline`.
 
 The following arguments are accepted:
 
-* :typoscript:`identifier` (string) **mandatory** - the consent name as configured in Usercentrics
+* :typoscript:`dataProcessingService` (string) **mandatory** - the data processing service name as configured in Usercentrics
 * :typoscript:`file` (string) **mandatory for external files** - the path to the script file
 * :typoscript:`value` (string) **mandatory for inline scripts** - the JavaScript being rendered inline
 * :typoscript:`attributes` (array) - a key / value dictionary with attributes to be rendered in the :html:`<script>` tag
@@ -38,7 +38,7 @@ Example:
    plugin.tx_usercentrics {
        jsFiles {
            10 {
-               identifier = Google Analytics
+               dataProcessingService = Google Analytics
                file = https://www.google-analytics.com/analytics.js
                attributes {
                    async = async
@@ -48,7 +48,7 @@ Example:
 
        jsInline {
            10 {
-               identifier = Google Analytics
+               dataProcessingService = Google Analytics
                value (
                    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
                    ga('create', 'UA-XXXXX-Y', 'auto');
@@ -66,14 +66,14 @@ Example:
 Fluid
 =====
 
-Scripts that need a consent may be loaded via Fluid if necessary, e.g in case a content element needs another third party
+Scripts that need consent may be loaded via Fluid if necessary, e.g a content element needs another third party
 library. The extension ships the ViewHelper :php:`T3G\AgencyPack\Usercentrics\ViewHelpers\ScriptViewHelper` whose
 namespace may need to be imported.
 
 The following arguments are accepted:
 
 * :typoscript:`src` (string) **mandatory for external files** - the path to the script file
-* :typoscript:`identifier` (string) **mandatory** - the consent name as configured in Usercentrics
+* :typoscript:`dataProcessingService` (string) **mandatory** - the data processing service name as configured in Usercentrics
 * :typoscript:`attributes` (array) - a key / value dictionary with attributes to be rendered in the :html:`<script>` tag
 * :typoscript:`priority` (bool) - defines whether an include is rendered in :html:`<head>` or at the bottom of :html:`<body>`
 
@@ -84,8 +84,8 @@ Example:
 .. code-block:: html
 
    <html xmlns:usercentrics="http://typo3.org/ns/T3G/AgencyPack/Usercentrics/ViewHelpers">
-     <usercentrics:script identifier="Google Analytics" src="https://www.google-analytics.com/analytics.js" />
-     <usercentrics:script identifier="Google Analytics">
+     <usercentrics:script dataProcessingService="Google Analytics" src="https://www.google-analytics.com/analytics.js" />
+     <usercentrics:script dataProcessingService="Google Analytics">
         window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
         ga('create', 'UA-XXXXX-Y', 'auto');
         ga('send', 'pageview');
@@ -102,19 +102,18 @@ Example:
 
 .. code-block:: php
 
+   $dataProcessingService = 'Google Analytics';
    $assetCollector = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\AssetCollector::class);
 
-   $identifier = 'GoogleAnalytics';
-   $consentName = 'Google Analytics';
-
+   $identifier = \TYPO3\CMS\Core\Utility\StringUtility::getUniqueId($dataProcessingService . '-');
    $file = 'https://www.google-analytics.com/analytics.js';
    $attributes = [
        'type' => 'text/plain',
-       'data-usercentrics' => $consentName
+       'data-usercentrics' => $dataProcessingService
    ];
-
    $assetCollector->addJavaScript($identifier, $file, $attributes);
 
+   $identifier = \TYPO3\CMS\Core\Utility\StringUtility::getUniqueId($dataProcessingService . '-');
    $source = 'window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;'
        . 'ga(\'create\', \'UA-XXXXX-Y\', \'auto\');'
        . 'ga(\'send\', \'pageview\');';

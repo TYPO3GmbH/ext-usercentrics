@@ -22,7 +22,7 @@ Usercentrics Integration for TYPO3
    This extension documentation is published under the
    `GNU General Public License, version 2 <https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html>`__
 
-This extension integrates Usercentrics (Compliance and Consent Management) into TYPO3
+Use all benefits of the Usercentrics Consent Management Platform (CMP) with this extension in TYPO3 now.
 
 
 .. toctree::
