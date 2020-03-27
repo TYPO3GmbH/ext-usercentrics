@@ -1,7 +1,4 @@
 plugin.tx_usercentrics {
-    id = {$plugin.tx_usercentrics.id}
-
-    jsFiles {
-    }
+    id = {$plugin.tx_usercentrics.settingsId}
 }
 
