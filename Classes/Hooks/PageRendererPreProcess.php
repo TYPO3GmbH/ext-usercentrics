@@ -12,6 +12,7 @@ namespace T3G\AgencyPack\Usercentrics\Hooks;
 
 use T3G\AgencyPack\Usercentrics\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class PageRendererPreProcess
@@ -35,9 +36,9 @@ class PageRendererPreProcess
             return;
         }
         if (!$this->isValidId($config)) {
-            throw new \InvalidArgumentException('Usercentrics ID not configured, please set plugin.tx_usercentrics.id in your TypoScript configuration', 1583774571);
+            throw new \InvalidArgumentException('Usercentrics ID not configured, please set plugin.tx_usercentrics.settingsId in your TypoScript configuration', 1583774571);
         }
-        $this->addUsercentricsScript($config['id']);
+        $this->addUsercentricsScript($config['settingsId']);
         $this->addConfiguredJsFiles($config['jsFiles.'] ?? []);
         $this->addConfiguredInlineJavaScript($config['jsInline.'] ?? []);
     }
@@ -49,8 +50,9 @@ class PageRendererPreProcess
             if (!$this->isValidIdentifier($inline)) {
                 throw new \InvalidArgumentException('No valid identifier given for inline JS, please check TypoScript configuration.', 1583774685);
             }
-            $identifier = $inline['identifier'];
-            $attributes = $this->getAttributesForUsercentrics($inline['attributes.'] ?? [], $identifier);
+            $dataServiceProcessor = $inline['dataServiceProcessor'];
+            $identifier = StringUtility::getUniqueId($dataServiceProcessor . '-');
+            $attributes = $this->getAttributesForUsercentrics($inline['attributes.'] ?? [], $dataServiceProcessor);
             $options = $this->convertPriorityToBoolean($inline['options.'] ?? []);
             $this->assetCollector->addInlineJavaScript($identifier, $code, $attributes, $options);
         }
@@ -65,18 +67,19 @@ class PageRendererPreProcess
             if (!$this->isValidIdentifier($jsFile)) {
                 throw new \InvalidArgumentException('No valid identifier given for file, please check TypoScript configuration.', 1583774683);
             }
-            $identifier = $jsFile['identifier'];
-            $attributes = $this->getAttributesForUsercentrics($jsFile['attributes.'] ?? [], $identifier);
+            $dataServiceProcessor = $jsFile['dataServiceProcessor'];
+            $identifier = StringUtility::getUniqueId($dataServiceProcessor . '-');
+            $attributes = $this->getAttributesForUsercentrics($jsFile['attributes.'] ?? [], $dataServiceProcessor);
             $options = $this->convertPriorityToBoolean($jsFile['options.'] ?? []);
             $this->assetCollector->addJavaScript($identifier, $jsFile['file'], $attributes, $options);
         }
     }
 
-    protected function addUsercentricsScript(string $id)
+    protected function addUsercentricsScript(string $settingsId)
     {
         $this->assetCollector->addJavaScript('usercentrics', 'https://app.usercentrics.eu/latest/main.js', [
             'type' => 'application/javascript',
-            'id' => $id
+            'id' => $settingsId
         ]);
     }
 
@@ -89,10 +92,10 @@ class PageRendererPreProcess
         return $options;
     }
 
-    protected function getAttributesForUsercentrics(array $attributes, string $identifier): array
+    protected function getAttributesForUsercentrics(array $attributes, string $dataServiceProcessor): array
     {
         $attributes['type'] = 'text/plain';
-        $attributes['data-usercentrics'] = $identifier;
+        $attributes['data-usercentrics'] = $dataServiceProcessor;
         return $attributes;
     }
 
@@ -114,11 +117,11 @@ class PageRendererPreProcess
 
     protected function isValidId(array $config): bool
     {
-        return isset($config['id']) && is_string($config['id']);
+        return isset($config['settingsId']) && is_string($config['settingsId']);
     }
 
     protected function isValidIdentifier(array $jsFile): bool
     {
-        return isset($jsFile['identifier']) && is_string($jsFile['identifier']);
+        return isset($jsFile['dataServiceProcessor']) && is_string($jsFile['dataServiceProcessor']);
     }
 }
