@@ -16,6 +16,7 @@ composer.lock
 .ddev/**/*.txt
 .ddev/commands/
 Build/.phpunit.result.cache
+Documentation-GENERATED-temp/
 node_modules/
 var/
 config/
