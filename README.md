@@ -19,17 +19,17 @@ This extension integrates Usercentrics (Compliance and Consent Management) into 
 
 ```
 plugin.tx_usercentrics {
-    id = {$plugin.tx_usercentrics.id}
+    settingsId = {$plugin.tx_usercentrics.settingsId}
     jsFiles {
 
         # Path to JS File (required)
         10.file = EXT:site/Resources/Public/JavaScriyt/MyScriptFile.js
 
         # Identifier to use in Usercentrics (required)
-        10.identifier = myscript
+        10.dataServiceProcessor = My Data Service Processor
 
         20.file = secondFile.js
-        20.identifier = anotherFile
+        20.dataServiceProcessor = My Data Service Processor
 
         # attributes for the script tag (optional)
         20.attributes {

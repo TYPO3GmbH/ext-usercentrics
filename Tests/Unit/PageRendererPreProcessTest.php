@@ -62,7 +62,7 @@ class PageRendererPreProcessTest extends UnitTestCase
         $this->templateService->setup = [
             'plugin.' => [
                 'tx_usercentrics.' => [
-                    'id' => 'myUsercentricsId',
+                    'settingsId' => 'myUsercentricsId',
                 ],
             ],
         ];
@@ -84,7 +84,7 @@ class PageRendererPreProcessTest extends UnitTestCase
         $this->templateService->setup = [
             'plugin.' => [
                 'tx_usercentrics.' => [
-                    'id' => 'myUsercentricsId',
+                    'settingsId' => 'myUsercentricsId',
                     'jsFiles.' => [
                         '10.' => [
                             'file' => 'EXT:site/Resources/Public/JavaScript/test.js',
@@ -108,7 +108,7 @@ class PageRendererPreProcessTest extends UnitTestCase
         $this->templateService->setup = [
             'plugin.' => [
                 'tx_usercentrics.' => [
-                    'id' => 'myUsercentricsId',
+                    'settingsId' => 'myUsercentricsId',
                     'jsFiles.' => [
                         '10.' => [
                         ],
@@ -133,11 +133,11 @@ class PageRendererPreProcessTest extends UnitTestCase
         $this->templateService->setup = [
             'plugin.' => [
                 'tx_usercentrics.' => [
-                    'id' => 'myUsercentricsId',
+                    'settingsId' => 'myUsercentricsId',
                     'jsFiles.' => [
                         '10.' => [
                             'file' => $file,
-                            'identifier' => $identifier,
+                            'dataServiceProcessor' => $identifier,
                             'attributes.' => [
                                 'custom' => 'attribute'
                             ]
@@ -168,11 +168,11 @@ class PageRendererPreProcessTest extends UnitTestCase
         $this->templateService->setup = [
             'plugin.' => [
                 'tx_usercentrics.' => [
-                    'id' => 'myUsercentricsId',
+                    'settingsId' => 'myUsercentricsId',
                     'jsFiles.' => [
                         '10.' => [
                             'file' => $file,
-                            'identifier' => $identifier,
+                            'dataServiceProcessor' => $identifier,
                             'attributes.' => [
                                 'custom' => 'attribute'
                             ],
@@ -207,7 +207,7 @@ class PageRendererPreProcessTest extends UnitTestCase
         $this->templateService->setup = [
             'plugin.' => [
                 'tx_usercentrics.' => [
-                    'id' => 'myUsercentricsId',
+                    'settingsId' => 'myUsercentricsId',
                     'jsInline.' => [
                         '10.' => [
                             'value' => 'alert(123);',
@@ -233,11 +233,11 @@ class PageRendererPreProcessTest extends UnitTestCase
         $this->templateService->setup = [
             'plugin.' => [
                 'tx_usercentrics.' => [
-                    'id' => 'myUsercentricsId',
+                    'settingsId' => 'myUsercentricsId',
                     'jsInline.' => [
                         '10.' => [
                             'value' => $value,
-                            'identifier' => $identifier,
+                            'dataServiceProcessor' => $identifier,
                             'attributes.' => [
                                 'custom' => 'attribute'
                             ],

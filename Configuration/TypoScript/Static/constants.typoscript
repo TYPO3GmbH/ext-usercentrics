@@ -3,6 +3,6 @@
 plugin {
     tx_usercentrics {
         # cat=usercentrics; type=string; label=Usercentrics ID
-        id =
+        settingsId =
     }
 }
