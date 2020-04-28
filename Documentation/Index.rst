@@ -13,7 +13,7 @@ Usercentrics Integration for TYPO3
    en
 
 :Authors:
-   Your name
+   TYPO3 GmbH
 
 :Email:
    info@typo3.com
