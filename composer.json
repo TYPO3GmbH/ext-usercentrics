@@ -69,7 +69,7 @@
     "require": {
         "php": "^7.2",
         "ext-json": "*",
-        "typo3/cms-core": "10.*@dev"
+        "typo3/cms-core": "^10.4.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
