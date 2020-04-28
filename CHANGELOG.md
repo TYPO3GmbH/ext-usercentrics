@@ -1,7 +1,7 @@
 # 9.0.0
 
 ## FEATURE
-- [FEATURE] Add Viewhelper [TASK] Clean-up [TASK] Extend README [FEATURE] Allow usage of InlineJS bdffe04
+- [FEATURE] Add Viewhelper
 
 ## TASK
 - [TASK] Adjust exports 2ee3afd
@@ -17,7 +17,7 @@
 - [TASK] Setup workflows for older versions 65cb94b
 - [TASK] Remove 9.5 from matrix config 20159a9
 - [TASK] Cover all the things f89a854
-- [FEATURE] Add Viewhelper [TASK] Clean-up [TASK] Extend README [FEATURE] Allow usage of InlineJS bdffe04
+- [TASK] Extend README bdffe04
 - [TASK] Cleanup asset stuff ff9c099
 - [TASK] v9 version 3e12792
 - [TASK] Fix stuff 8b7fefd
