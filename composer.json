@@ -39,6 +39,9 @@
             "extension-key": "usercentrics",
             "web-dir": ".build/web",
             "app-dir": ".build"
+        },
+        "branch-alias": {
+            "dev-9.5": "9.0.x-dev"
         }
     },
     "scripts": {
