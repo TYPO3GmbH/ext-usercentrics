@@ -10,6 +10,8 @@
 .gitattributes export-ignore
 .gitignore export-ignore
 .travis.yaml export-ignore
+.phplist.yml export-ignore
+.php_cs.dist export-ignore
 
 # Build
 package.json export-ignore
