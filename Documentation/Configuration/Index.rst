@@ -32,3 +32,16 @@ In TypoScript, set the constant as follows:
 
    plugin.tx_usercentrics.settingsId = XXXXXXXX
 
+
+Configure The Usercentrics Default language
+===========================================
+
+The extension ships a TypoScript constant that allows to set the default languagew that is used.
+The language must be enabled in the usercentrics account settings and be provided as iso2-code.
+
+In TypoScript, set the constant as follows:
+
+.. code-block:: typoscript
+
+   plugin.tx_usercentrics.language = en
+

@@ -63,6 +63,7 @@ class PageRendererPreProcessTest extends UnitTestCase
             'plugin.' => [
                 'tx_usercentrics.' => [
                     'settingsId' => 'myUsercentricsId',
+                    'language' => 'en',
                 ],
             ],
         ];
@@ -73,6 +74,7 @@ class PageRendererPreProcessTest extends UnitTestCase
         $this->assetCollector->addJavaScript('usercentrics', 'https://app.usercentrics.eu/latest/main.js', [
             'type' => 'application/javascript',
             'id' => 'myUsercentricsId',
+            'language' => 'en',
         ])->shouldHaveBeenCalled();
     }
 
@@ -85,6 +87,7 @@ class PageRendererPreProcessTest extends UnitTestCase
             'plugin.' => [
                 'tx_usercentrics.' => [
                     'settingsId' => 'myUsercentricsId',
+                    'language' => 'en',
                     'jsFiles.' => [
                         '10.' => [
                             'file' => 'EXT:site/Resources/Public/JavaScript/test.js',
@@ -109,6 +112,7 @@ class PageRendererPreProcessTest extends UnitTestCase
             'plugin.' => [
                 'tx_usercentrics.' => [
                     'settingsId' => 'myUsercentricsId',
+                    'language' => 'en',
                     'jsFiles.' => [
                         '10.' => [
                         ],
@@ -134,6 +138,7 @@ class PageRendererPreProcessTest extends UnitTestCase
             'plugin.' => [
                 'tx_usercentrics.' => [
                     'settingsId' => 'myUsercentricsId',
+                    'language' => 'en',
                     'jsFiles.' => [
                         '10.' => [
                             'file' => $file,
@@ -169,6 +174,7 @@ class PageRendererPreProcessTest extends UnitTestCase
             'plugin.' => [
                 'tx_usercentrics.' => [
                     'settingsId' => 'myUsercentricsId',
+                    'language' => 'en',
                     'jsFiles.' => [
                         '10.' => [
                             'file' => $file,
@@ -208,6 +214,7 @@ class PageRendererPreProcessTest extends UnitTestCase
             'plugin.' => [
                 'tx_usercentrics.' => [
                     'settingsId' => 'myUsercentricsId',
+                    'language' => 'en',
                     'jsInline.' => [
                         '10.' => [
                             'value' => 'alert(123);',
@@ -234,6 +241,7 @@ class PageRendererPreProcessTest extends UnitTestCase
             'plugin.' => [
                 'tx_usercentrics.' => [
                     'settingsId' => 'myUsercentricsId',
+                    'language' => 'en',
                     'jsInline.' => [
                         '10.' => [
                             'value' => $value,
