@@ -23,5 +23,7 @@ class PageRendererPostProcess
         $jsFiles .= $assetRenderer->renderJavaScript(true);
         $jsFooterFiles = &$params['jsFooterFiles'];
         $jsFooterFiles .= $assetRenderer->renderJavaScript();
+        $jsInline = &$params['jsInline'];
+        $jsInline .= $assetRenderer->renderInlineJavaScript();
     }
 }
