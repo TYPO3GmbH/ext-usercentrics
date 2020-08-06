@@ -1,9 +1,17 @@
+# 9.0.1
+
+## BUGFIX
+- [BUGFIX] Register argument dataServiceProcessor in ViewHelper (#16) 1b41ebf
+- [BUGFIX] Allow setting of default language (#15) bedab41
+- [BUGFIX] Render jsInline (#18) 81d8769
+
 # 9.0.0
 
 ## FEATURE
 - [FEATURE] Add Viewhelper [TASK] Clean-up [TASK] Extend README [FEATURE] Allow usage of InlineJS bdffe04
 
 ## TASK
+- [TASK] Adjust doc author cc5f974
 - [TASK] Update versions 77ddedf
 - [TASK] Adjust exports 2ee3afd
 - [TASK] Update versions 81f3e81
