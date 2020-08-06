@@ -38,7 +38,7 @@ class PageRendererPreProcess
         if (!$this->isValidId($config)) {
             throw new \InvalidArgumentException('Usercentrics ID not configured, please set plugin.tx_usercentrics.settingsId in your TypoScript configuration', 1583774571);
         }
-        $this->addUsercentricsScript($config['settingsId']);
+        $this->addUsercentricsScript($config);
         $this->addConfiguredJsFiles($config['jsFiles.'] ?? []);
         $this->addConfiguredInlineJavaScript($config['jsInline.'] ?? []);
     }
@@ -75,11 +75,12 @@ class PageRendererPreProcess
         }
     }
 
-    protected function addUsercentricsScript(string $settingsId): void
+    protected function addUsercentricsScript(array $config): void
     {
         $this->assetCollector->addJavaScript('usercentrics', 'https://app.usercentrics.eu/latest/main.js', [
             'type' => 'application/javascript',
-            'id' => $settingsId
+            'id' => $config['settingsId'],
+            'language' => $config['language'],
         ]);
     }
 
