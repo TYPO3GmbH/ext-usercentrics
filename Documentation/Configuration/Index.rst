@@ -36,8 +36,8 @@ In TypoScript, set the constant as follows:
 Configure The Usercentrics Default language
 ===========================================
 
-The extension ships a TypoScript constant that allows to set the default languagew that is used.
-The language must be enabled in the usercentrics account settings and be provided as iso2-code.
+The extension ships a TypoScript constant that allows to set the default language to be used.
+The language must be enabled in the Usercentrics account settings and provided as ISO 639-1 code.
 
 In TypoScript, set the constant as follows:
 
