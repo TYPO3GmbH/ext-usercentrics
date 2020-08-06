@@ -142,7 +142,7 @@ class PageRendererPreProcessTest extends UnitTestCase
                     'jsFiles.' => [
                         '10.' => [
                             'file' => $file,
-                            'dataServiceProcessor' => $identifier,
+                            'dataProcessingService' => $identifier,
                             'attributes.' => [
                                 'custom' => 'attribute'
                             ]
@@ -178,7 +178,7 @@ class PageRendererPreProcessTest extends UnitTestCase
                     'jsFiles.' => [
                         '10.' => [
                             'file' => $file,
-                            'dataServiceProcessor' => $identifier,
+                            'dataProcessingService' => $identifier,
                             'attributes.' => [
                                 'custom' => 'attribute'
                             ],
@@ -245,7 +245,7 @@ class PageRendererPreProcessTest extends UnitTestCase
                     'jsInline.' => [
                         '10.' => [
                             'value' => $value,
-                            'dataServiceProcessor' => $identifier,
+                            'dataProcessingService' => $identifier,
                             'attributes.' => [
                                 'custom' => 'attribute'
                             ],

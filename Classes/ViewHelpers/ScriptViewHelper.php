@@ -20,8 +20,8 @@ use TYPO3\CMS\Core\Utility\StringUtility;
  *
  * ::
  *
- *    <usercentrics:script dataServiceProcessor="Data Service" src="EXT:my_ext/Resources/Public/JavaScript/foo.js" />
- *    <usercentrics:script dataServiceProcessor="Data Service">
+ *    <usercentrics:script dataProcessingService="Data Service" src="EXT:my_ext/Resources/Public/JavaScript/foo.js" />
+ *    <usercentrics:script dataProcessingService="Data Service">
  *       alert('hello world');
  *    </usercentrics:script>
  */
@@ -30,16 +30,17 @@ class ScriptViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Asset\ScriptViewHelp
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument('dataServiceProcessor', 'string', 'The data processing service name as configured in Usercentrics', true);
+        $this->registerArgument('dataServiceProcessor', 'string', 'the data processing service name as configured in Usercentrics', true);
+        $this->registerArgument('dataProcessingService', 'string', 'the data processing service name as configured in Usercentrics', true);
     }
 
     public function render(): string
     {
-        $dataServiceProcessor = $this->arguments['dataServiceProcessor'];
-        $identifier = StringUtility::getUniqueId($dataServiceProcessor . '-');
+        $dataProcessingService = $this->getDataProcessingService();
+        $identifier = StringUtility::getUniqueId($dataProcessingService . '-');
         $attributes = $this->tag->getAttributes();
         $attributes['type'] = 'text/plain';
-        $attributes['data-usercentrics'] = $dataServiceProcessor;
+        $attributes['data-usercentrics'] = $dataProcessingService;
         $src = $this->tag->getAttribute('src');
         unset($attributes['src']);
         $options = [
@@ -54,5 +55,17 @@ class ScriptViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Asset\ScriptViewHelp
             }
         }
         return '';
+    }
+
+    protected function getDataProcessingService(): string
+    {
+        if (isset($this->arguments['dataServiceProcessor'])) {
+            trigger_error(
+                'The argument "dataServiceProcessor" of the ' . self::class . ' ViewHelper has been marked as deprecated. Use dataProcessingService instead.',
+                E_USER_DEPRECATED
+            );
+            return $this->arguments['dataServiceProcessor'];
+        }
+        return $this->arguments['dataProcessingService'];
     }
 }
