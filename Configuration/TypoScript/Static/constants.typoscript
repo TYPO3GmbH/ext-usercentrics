@@ -4,5 +4,7 @@ plugin {
     tx_usercentrics {
         # cat=usercentrics; type=string; label=Usercentrics ID
         settingsId =
+        # cat=usercentrics; type=string; label=language iso code
+        language = en
     }
 }
