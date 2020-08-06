@@ -30,7 +30,7 @@ class ScriptViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Asset\ScriptViewHelp
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument('dataServiceProcessor', 'string', 'the data processing service name as configured in Usercentrics', true);
+        $this->registerArgument('dataServiceProcessor', 'string', 'The data processing service name as configured in Usercentrics', true);
     }
 
     public function render(): string
