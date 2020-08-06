@@ -50,9 +50,9 @@ class PageRendererPreProcess
             if (!$this->isValidIdentifier($inline)) {
                 throw new \InvalidArgumentException('No valid identifier given for inline JS, please check TypoScript configuration.', 1583774685);
             }
-            $dataServiceProcessor = $inline['dataServiceProcessor'];
-            $identifier = StringUtility::getUniqueId($dataServiceProcessor . '-');
-            $attributes = $this->getAttributesForUsercentrics($inline['attributes.'] ?? [], $dataServiceProcessor);
+            $dataProcessingService = $this->getDataProcessingService($inline);
+            $identifier = StringUtility::getUniqueId($dataProcessingService . '-');
+            $attributes = $this->getAttributesForUsercentrics($inline['attributes.'] ?? [], $dataProcessingService);
             $options = $this->convertPriorityToBoolean($inline['options.'] ?? []);
             $this->assetCollector->addInlineJavaScript($identifier, $code, $attributes, $options);
         }
@@ -67,9 +67,9 @@ class PageRendererPreProcess
             if (!$this->isValidIdentifier($jsFile)) {
                 throw new \InvalidArgumentException('No valid identifier given for file, please check TypoScript configuration.', 1583774683);
             }
-            $dataServiceProcessor = $jsFile['dataServiceProcessor'];
-            $identifier = StringUtility::getUniqueId($dataServiceProcessor . '-');
-            $attributes = $this->getAttributesForUsercentrics($jsFile['attributes.'] ?? [], $dataServiceProcessor);
+            $dataProcessingService = $this->getDataProcessingService($jsFile);
+            $identifier = StringUtility::getUniqueId($dataProcessingService . '-');
+            $attributes = $this->getAttributesForUsercentrics($jsFile['attributes.'] ?? [], $dataProcessingService);
             $options = $this->convertPriorityToBoolean($jsFile['options.'] ?? []);
             $this->assetCollector->addJavaScript($identifier, $jsFile['file'], $attributes, $options);
         }
@@ -93,10 +93,10 @@ class PageRendererPreProcess
         return $options;
     }
 
-    protected function getAttributesForUsercentrics(array $attributes, string $dataServiceProcessor): array
+    protected function getAttributesForUsercentrics(array $attributes, string $dataProcessingService): array
     {
         $attributes['type'] = 'text/plain';
-        $attributes['data-usercentrics'] = $dataServiceProcessor;
+        $attributes['data-usercentrics'] = $dataProcessingService;
         return $attributes;
     }
 
@@ -123,6 +123,27 @@ class PageRendererPreProcess
 
     protected function isValidIdentifier(array $jsFile): bool
     {
-        return isset($jsFile['dataServiceProcessor']) && is_string($jsFile['dataServiceProcessor']);
+        if (isset($jsFile['dataServiceProcessor'])) {
+            trigger_error(
+                'The setting "dataServiceProcessor" has been marked as deprecated. Use dataProcessingService instead.',
+                E_USER_DEPRECATED
+            );
+            return isset($jsFile['dataServiceProcessor']) && is_string($jsFile['dataServiceProcessor']);
+        }
+
+        return isset($jsFile['dataProcessingService']) && is_string($jsFile['dataProcessingService']);
+    }
+
+    protected function getDataProcessingService(array $configuration): string
+    {
+        if (isset($configuration['dataServiceProcessor'])) {
+            trigger_error(
+                'The setting "dataServiceProcessor" has been marked as deprecated. Use dataProcessingService instead.',
+                E_USER_DEPRECATED
+            );
+            return $configuration['dataServiceProcessor'];
+        }
+
+        return $configuration['dataProcessingService'];
     }
 }
