@@ -61,7 +61,7 @@ class ScriptViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Asset\ScriptViewHelp
     {
         if (isset($this->arguments['dataServiceProcessor'])) {
             trigger_error(
-                'The argument "dataServiceProcessor" of the ' . self::class . ' ViewHelper has been marked as deprecated. Use dataProcessingService instead.',
+                'The argument "dataServiceProcessor" of ' . self::class . ' has been marked as deprecated. Use dataProcessingService instead.',
                 E_USER_DEPRECATED
             );
             return $this->arguments['dataServiceProcessor'];

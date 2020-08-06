@@ -125,7 +125,7 @@ class PageRendererPreProcess
     {
         if (isset($jsFile['dataServiceProcessor'])) {
             trigger_error(
-                'The settings "dataServiceProcessor" has been marked as deprecated. Use dataProcessingService instead.',
+                'The setting "dataServiceProcessor" has been marked as deprecated. Use dataProcessingService instead.',
                 E_USER_DEPRECATED
             );
             return isset($jsFile['dataServiceProcessor']) && is_string($jsFile['dataServiceProcessor']);
@@ -138,7 +138,7 @@ class PageRendererPreProcess
     {
         if (isset($configuration['dataServiceProcessor'])) {
             trigger_error(
-                'The settings "dataServiceProcessor" has been marked as deprecated. Use dataProcessingService instead.',
+                'The setting "dataServiceProcessor" has been marked as deprecated. Use dataProcessingService instead.',
                 E_USER_DEPRECATED
             );
             return $configuration['dataServiceProcessor'];
