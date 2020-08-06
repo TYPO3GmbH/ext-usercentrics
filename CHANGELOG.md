@@ -1,9 +1,20 @@
+# 10.0.1
+
+## TASK
+- [TASK] Fix automatic tests a031b94
+
+## BUGFIX
+- [BUGFIX] Register argument dataServiceProcessor in ViewHelper (#16) 1e11ac1
+- [BUGFIX] Allow setting of default language (#15) 6e526ba
+- [BUGFIX] Register argument dataServiceProcessor in ViewHelper fb1b095
+
 # 10.0.0
 
 ## FEATURE
 - [FEATURE] Add Viewhelper [TASK] Clean-up [TASK] Extend README [FEATURE] Allow usage of InlineJS bdffe04
 
 ## TASK
+- [TASK] Adjust doc author 2da2f61
 - [TASK] Adjust constraints 539d84c
 - [TASK] Adjust changelog 32c7cc6
 - [TASK] Add documentation (#8) 999c8bb

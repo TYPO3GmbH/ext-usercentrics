@@ -3,7 +3,7 @@
     "description": "This extension provides a usercentrics integration into TYPO3.",
     "type": "typo3-cms-extension",
     "license": "GPL-2.0-or-later",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "authors": [
         {
@@ -41,7 +41,7 @@
             "app-dir": ".build"
         },
         "branch-alias": {
-            "dev-develop": "10.0.x-dev"
+            "dev-10": "10.0.x-dev"
         }
     },
     "scripts": {
