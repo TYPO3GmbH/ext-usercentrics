@@ -1,3 +1,9 @@
+# 10.0.2
+
+## BUGFIX
+- [BUGFIX] Use correct configuration for settingsId (#20) 771ceb3
+- [BUGFIX] Remove dev-master from build matrix 9ec6a8e
+
 # 10.0.1
 
 ## TASK
