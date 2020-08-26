@@ -10,7 +10,9 @@ declare(strict_types = 1);
 
 namespace T3G\AgencyPack\Usercentrics\ViewHelpers;
 
+use T3G\AgencyPack\Usercentrics\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\StringUtility;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 /**
  * Usercentrics Viewhelper
@@ -25,11 +27,47 @@ use TYPO3\CMS\Core\Utility\StringUtility;
  *       alert('hello world');
  *    </usercentrics:script>
  */
-class ScriptViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Asset\ScriptViewHelper
+class ScriptViewHelper extends AbstractTagBasedViewHelper
 {
+    /**
+     * @var AssetCollector
+     */
+    protected $assetCollector;
+
+    /**
+     * @param AssetCollector $assetCollector
+     */
+    public function injectAssetCollector(AssetCollector $assetCollector): void
+    {
+        $this->assetCollector = $assetCollector;
+    }
+
     public function initializeArguments(): void
     {
         parent::initializeArguments();
+        parent::registerUniversalTagAttributes();
+        $this->registerTagAttribute('async', 'bool', '', false);
+        $this->registerTagAttribute('crossorigin', 'string', '', false);
+        $this->registerTagAttribute('defer', 'bool', '', false);
+        $this->registerTagAttribute('integrity', 'string', '', false);
+        $this->registerTagAttribute('nomodule', 'bool', '', false);
+        $this->registerTagAttribute('nonce', 'string', '', false);
+        $this->registerTagAttribute('referrerpolicy', 'string', '', false);
+        $this->registerTagAttribute('src', 'string', '', false);
+        $this->registerTagAttribute('type', 'string', '', false);
+        $this->registerArgument(
+            'identifier',
+            'string',
+            'Use this identifier within templates to only inject your JS once, even though it is added multiple times',
+            true
+        );
+        $this->registerArgument(
+            'priority',
+            'boolean',
+            'Define whether the JavaScript should be put in the <head> tag above-the-fold or somewhere in the body part.',
+            false,
+            false
+        );
         $this->registerArgument('dataServiceProcessor', 'string', 'The data processing service name as configured in Usercentrics', true);
     }
 
