@@ -1,3 +1,9 @@
+# 9.0.2
+
+## BUGFIX
+- [BUGFIX] Backport missing core ScriptViewHelper (#21) f2f4500
+- [BUGFIX] Use correct configuration for settingsId (#20) 3048426
+
 # 9.0.1
 
 ## BUGFIX
