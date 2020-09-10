@@ -1,3 +1,8 @@
+# 9.0.3
+
+## BUGFIX
+- [BUGFIX] Unescape src before hand it over to the asset collector (#23) 0f61d4b
+
 # 9.0.2
 
 ## BUGFIX
