@@ -26,10 +26,10 @@ plugin.tx_usercentrics {
         10.file = EXT:site/Resources/Public/JavaScriyt/MyScriptFile.js
 
         # Identifier to use in Usercentrics (required)
-        10.dataProcessingService = My Data Processing Service
+        10.dataServiceProcessor = My Data Processing Service
 
         20.file = secondFile.js
-        20.dataProcessingService = My other Data Processing Service
+        20.dataServiceProcessor = My other Data Processing Service
 
         # attributes for the script tag (optional)
         20.attributes {
@@ -47,7 +47,7 @@ plugin.tx_usercentrics {
       10.value (
         alert(123);
       )
-      10.dataProcessingService = My Data Processing Service
+      10.dataServiceProcessor = My Data Processing Service
       10.attributes {
         custom = attribute
       }
@@ -64,8 +64,8 @@ You do not need to set the `type` or `data-usercentrics` attributes for the scri
 The extension comes with a custom view helper which can be used to add scripts via Fluid:
 
 ```html
-<usercentrics:script dataProcessingService="identifier123" src="EXT:my_ext/Resources/Public/JavaScript/foo.js" />
-<usercentrics:script dataProcessingService="identifier123">
+<usercentrics:script dataServiceProcessor="identifier123" src="EXT:my_ext/Resources/Public/JavaScript/foo.js" />
+<usercentrics:script dataServiceProcessor="identifier123">
    alert('hello world');
 </usercentrics:script>
 ```
@@ -78,12 +78,12 @@ set the attributes `type=text/plain` and `data-usercentrics=identifer`.
 Example:
 
 ```
-    $dataProcessingService = 'My Data Processing Service';
-    $identifier = \TYPO3\CMS\Core\Utility\StringUtility::getUniqueId($dataProcessingService . '-');
+    $dataServiceProcessor = 'My Data Processing Service';
+    $identifier = \TYPO3\CMS\Core\Utility\StringUtility::getUniqueId($dataServiceProcessor . '-');
     $file = 'EXT:site/Resources/Public/JavaScript/Scripts.js';
     $attributes = [
         'type' => 'text/plain',
-        'data-usercentrics' => $dataProcessingService
+        'data-usercentrics' => $dataServiceProcessor
     ];
     $assetCollector = GeneralUtility::makeInstance(AssetCollector::class);
     $assetCollector->addJavaScript($identifier, $file, $attributes);
