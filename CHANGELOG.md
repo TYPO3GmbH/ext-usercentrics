@@ -1,17 +1,31 @@
+# 9.0.4
+
+## TASK
+
+- [TASK] Add automatic TER deployment 5bcba14
+
+## BUGFIX
+
+- [BUGFIX] Set older PHP version not supported in ubuntu-latest image d586af4
+- [BUGFIX] Fix wrong documentation of dataServiceProcessor (#25) 5afc3ca
+
 # 9.0.3
 
 ## BUGFIX
+
 - [BUGFIX] Unescape src before hand it over to the asset collector (#23) 0f61d4b
 
 # 9.0.2
 
 ## BUGFIX
+
 - [BUGFIX] Backport missing core ScriptViewHelper (#21) f2f4500
 - [BUGFIX] Use correct configuration for settingsId (#20) 3048426
 
 # 9.0.1
 
 ## BUGFIX
+
 - [BUGFIX] Register argument dataServiceProcessor in ViewHelper (#16) 1b41ebf
 - [BUGFIX] Allow setting of default language (#15) bedab41
 - [BUGFIX] Render jsInline (#18) 81d8769
@@ -19,9 +33,11 @@
 # 9.0.0
 
 ## FEATURE
+
 - [FEATURE] Add Viewhelper [TASK] Clean-up [TASK] Extend README [FEATURE] Allow usage of InlineJS bdffe04
 
 ## TASK
+
 - [TASK] Adjust doc author cc5f974
 - [TASK] Update versions 77ddedf
 - [TASK] Adjust exports 2ee3afd
@@ -46,6 +62,7 @@
 - [TASK] Initial commit 1e29146
 
 ## BUGFIX
+
 - [BUGFIX] Update Github action workflow b7c15bf
 - [BUGFIX] Rename view helper d78853b
 - [BUGFIX] Rename view helper 01cd0c1
@@ -55,5 +72,6 @@
 - [BUGFIX] Fix URL 9f20262
 
 ## MISC
+
 - Merge remote-tracking branch 'origin/develop' into 9.5 469fb45
 
