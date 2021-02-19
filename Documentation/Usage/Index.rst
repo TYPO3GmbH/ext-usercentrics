@@ -32,7 +32,7 @@ The following arguments are accepted:
 * :typoscript:`priority` (bool) - defines whether an include is rendered in :html:`<head>` or at the bottom of :html:`<body>`
 
 .. warning::
-   In case the Usercentrics Release v10.0.1 or older is in use, there is no :typoscript:`dataProcessingService` argument. Use :typoscript:`dataServiceProcessor` instead.
+   In case Usercentrics version 10 or older is in use, there is no :typoscript:`dataProcessingService` argument. Use :typoscript:`dataServiceProcessor` instead.
    
 Example:
 
