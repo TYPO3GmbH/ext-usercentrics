@@ -11,5 +11,7 @@ if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
 
-// Add static template
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile('usercentrics', 'Configuration/TypoScript/Static/', 'Usercentrics Integration');
+call_user_func(static function () {
+    // Add static template
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile('usercentrics', 'Configuration/TypoScript/Static/', 'Usercentrics Integration');
+});
