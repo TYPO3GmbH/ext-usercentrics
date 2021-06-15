@@ -12,15 +12,13 @@ $EM_CONF[$_EXTKEY] = [
     'description' => '',
     'category' => 'fe',
     'state' => 'stable',
-    'uploadfolder' => 0,
-    'createDirs' => '',
     'clearCacheOnLoad' => 0,
     'author' => 'TYPO3 GmbH',
     'author_email' => 'info@typo3.com',
-    'version' => '10.0.0',
+    'version' => '11.0.0',
     'constraints' => [
         'depends' => [
-            'typo3' => '10.4.0-10.4.99',
+            'typo3' => '11.0.0-11.4.99',
         ],
         'conflicts' => [],
         'suggests' => [],

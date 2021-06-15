@@ -41,7 +41,7 @@
             "app-dir": ".build"
         },
         "branch-alias": {
-            "dev-develop": "10.0.x-dev"
+            "dev-develop": "11.0.x-dev"
         }
     },
     "scripts": {
@@ -56,10 +56,10 @@
             "@t3g:test:php:unit"
         ],
         "t3g:cgl": [
-            "php-cs-fixer fix --config=.php_cs.dist -v --dry-run"
+            "php-cs-fixer fix --config=.php_cs-fixer.dist.php -v --dry-run"
         ],
         "t3g:cgl:fix": [
-            "php-cs-fixer fix --config=.php_cs.dist"
+            "php-cs-fixer fix --config=.php_cs-fixer.dist.php"
         ],
         "post-autoload-dump": [
             "mkdir -p .build/web/typo3conf/ext/",
@@ -67,15 +67,15 @@
         ]
     },
     "require": {
-        "php": "^7.2",
+        "php": "^7.2 || ^8.0",
         "ext-json": "*",
-        "typo3/cms-core": "^10.4.0"
+        "typo3/cms-core": "^11.3.x-dev"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14",
-        "roave/security-advisories": "dev-master",
+        "friendsofphp/php-cs-fixer": "^v2.19",
+        "roave/security-advisories": "dev-latest",
         "typo3/testing-framework": "^4.9 || ^5.0 || ^6.3",
         "bk2k/extension-helper": "^1.0",
-        "overtrue/phplint": "^1.1"
+        "overtrue/phplint": "^3.0"
     }
 }
