@@ -14,4 +14,7 @@ if (!defined('TYPO3_MODE')) {
 call_user_func(static function () {
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][\T3G\AgencyPack\Usercentrics\Hooks\PageRendererPreProcess::class]
         = \T3G\AgencyPack\Usercentrics\Hooks\PageRendererPreProcess::class . '->addLibrary';
+
+    // Register "usercentrics" as global fluid namespace
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['usercentrics'][] = 'T3G\\AgencyPack\\Usercentrics\\ViewHelpers';
 });
