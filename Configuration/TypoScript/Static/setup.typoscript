@@ -1,4 +1,6 @@
 plugin.tx_usercentrics {
     settingsId = {$plugin.tx_usercentrics.settingsId}
     language = {$plugin.tx_usercentrics.language}
+    preconnectRessources = {$plugin.tx_usercentrics.preconnectRessources}
+    smartDataProtector = {$plugin.tx_usercentrics.smartDataProtector}
 }

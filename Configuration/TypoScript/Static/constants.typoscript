@@ -6,5 +6,9 @@ plugin {
         settingsId =
         # cat=usercentrics; type=string; label=language iso code
         language = en
+        #cat=usercentrics; type=boolean; label=add preconnect/preload ressources (performance improvements)
+        preconnectRessources = 0
+        #cat=usercentrics; type=boolean; label=include Smart Data Protector (Content Blocker)
+        smartDataProtector = 0
     }
 }
