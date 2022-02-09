@@ -38,7 +38,10 @@ class PageRendererPreProcess
         if (!$this->isValidId($config)) {
             throw new \InvalidArgumentException('Usercentrics ID not configured, please set plugin.tx_usercentrics.settingsId in your TypoScript configuration', 1583774571);
         }
+
         $this->addUsercentricsScript($config);
+        if($config['smartDataProtector'])
+            $this->addSmartDataProtectorScript($config);
         $this->addConfiguredJsFiles($config['jsFiles.'] ?? []);
         $this->addConfiguredInlineJavaScript($config['jsInline.'] ?? []);
     }
@@ -77,11 +80,74 @@ class PageRendererPreProcess
 
     protected function addUsercentricsScript(array $config): void
     {
-        $this->assetCollector->addJavaScript('usercentrics', 'https://app.usercentrics.eu/latest/main.js', [
-            'type' => 'application/javascript',
-            'id' => $config['settingsId'],
-            'language' => $config['language'],
-        ]);
+        if($config['preconnectRessources']) {
+            $this->assetCollector->addStyleSheet('usercentrics-preconnect-app', '//app.usercentrics.eu', [
+                    'type' => '',
+                    'rel' => 'preconnect'
+                ],
+                [
+                    'priority' => true
+                ]
+            );
+            $this->assetCollector->addStyleSheet('usercentrics-preconnect-api', '//api.usercentrics.eu', [
+                    'type' => '',
+                    'rel' => 'preconnect'
+                ],
+                [
+                    'priority' => true
+                ]
+            );
+            $this->assetCollector->addStyleSheet('usercentrics-preload-loader', '//app.usercentrics.eu/browser-ui/latest/loader.js', [
+                    'type' => '',
+                    'rel' => 'preload',
+                    'as' => 'script'
+                ],
+                [
+                    'priority' => true
+                ]
+            );
+        }
+
+        $this->assetCollector->addJavaScript('usercentrics-cmp', 'https://app.usercentrics.eu/browser-ui/latest/loader.js', [
+                'id' => 'usercentrics-cmp',
+                'data-settings-id' => $config['settingsId'],
+                'async' => 'async'
+            ],
+            [
+                'priority' => true
+            ]
+        );
+    }
+
+    protected function addSmartDataProtectorScript(array $config): void
+    {
+        if($config['preconnectRessources']) {
+            $this->assetCollector->addStyleSheet('usercentrics-preconnect-proxy', '//privacy-proxy.usercentrics.eu', [
+                    'type' => '',
+                    'rel' => 'preconnect'
+                ],
+                [
+                    'priority' => true
+                ]
+            );
+            $this->assetCollector->addStyleSheet('usercentrics-preload-bundle', '//privacy-proxy.usercentrics.eu/latest/uc-block.bundle.js', [
+                    'type' => '',
+                    'rel' => 'preload',
+                    'as' => 'script'
+                ],
+                [
+                    'priority' => true
+                ]
+            );
+        }
+
+        $this->assetCollector->addJavaScript('usercentrics-bundle', 'https://privacy-proxy.usercentrics.eu/latest/uc-block.bundle.js', [
+                'type' => 'application/javascript',
+            ],
+            [
+                'priority' => true
+            ]
+        );
     }
 
     protected function convertPriorityToBoolean(array $options): array
