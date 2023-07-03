@@ -7,3 +7,8 @@ services:
   T3G\AgencyPack\Usercentrics\:
     resource: '../Classes/*'
 
+  T3G\AgencyPack\Usercentrics\EventListener\AssetRenderer\UsercentricsLibrary:
+    tags:
+      - name: event.listener
+        identifier: 'usercentrics/UsercentricsLibrary'
+        event: TYPO3\CMS\Core\Page\Event\BeforeJavaScriptsRenderingEvent

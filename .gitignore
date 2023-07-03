@@ -22,4 +22,5 @@ var/
 config/
 
 # CGL Fixer
-.php_cs.cache
+.php-cs-fixer.cache
+.phplint.cache

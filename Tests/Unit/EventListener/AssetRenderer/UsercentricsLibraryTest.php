@@ -8,50 +8,36 @@ declare(strict_types = 1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace T3G\AgencyPack\Usercentrics\Tests\Unit;
+namespace T3G\AgencyPack\Usercentrics\Tests\Unit\EventListener\AssetRenderer;
 
-use Prophecy\Argument;
-use T3G\AgencyPack\Usercentrics\Hooks\PageRendererPreProcess;
+use T3G\AgencyPack\Usercentrics\EventListener\AssetRenderer\UsercentricsLibrary;
 use TYPO3\CMS\Core\Page\AssetCollector;
+use TYPO3\CMS\Core\Page\Event\BeforeJavaScriptsRenderingEvent;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
-class PageRendererPreProcessTest extends UnitTestCase
+class UsercentricsLibraryTest extends UnitTestCase
 {
-    protected $templateService;
-    protected $assetCollector;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $tsfeProphecy = $this->prophesize(TypoScriptFrontendController::class);
-        $this->templateService = $this->prophesize(TemplateService::class);
-        $tsfeProphecy->tmpl = $this->templateService->reveal();
-        $GLOBALS['TSFE'] = $tsfeProphecy->reveal();
-        $this->assetCollector = $this->prophesize(AssetCollector::class);
-        $this->assetCollector->addJavaScript(Argument::cetera())->willReturn($this->assetCollector->reveal());
-        $this->assetCollector->addInlineJavaScript(Argument::cetera())->willReturn($this->assetCollector->reveal());
-    }
-
     /**
      * @test
      */
     public function addLibraryThrowsExceptionIfUsercentricsIdIsNotSet(): void
     {
-        $this->templateService->setup = [
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionCode(1583774571);
+
+        $this->mockTypoScriptFrontend([
             'plugin.' => [
                 'tx_usercentrics.' => [
 
                 ],
             ],
-        ];
+        ]);
 
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionCode(1583774571);
-
-        $pageRendererPreProcess = new PageRendererPreProcess($this->assetCollector->reveal());
-        $pageRendererPreProcess->addLibrary();
+        $assetCollector = new AssetCollector();
+        $event = new BeforeJavaScriptsRenderingEvent($assetCollector, false, false);
+        (new UsercentricsLibrary())($event);
     }
 
     /**
@@ -59,23 +45,29 @@ class PageRendererPreProcessTest extends UnitTestCase
      */
     public function addLibraryAddsMainUsercentricsScript(): void
     {
-        $this->templateService->setup = [
+        $this->mockTypoScriptFrontend([
             'plugin.' => [
                 'tx_usercentrics.' => [
                     'settingsId' => 'myUsercentricsId',
                     'language' => 'en',
                 ],
             ],
-        ];
+        ]);
 
-        $pageRendererPreProcess = new PageRendererPreProcess($this->assetCollector->reveal());
-        $pageRendererPreProcess->addLibrary();
+        $event = new BeforeJavaScriptsRenderingEvent(new AssetCollector(), false, false);
+        (new UsercentricsLibrary())($event);
 
-        $this->assetCollector->addJavaScript('usercentrics', 'https://app.usercentrics.eu/latest/main.js', [
-            'type' => 'application/javascript',
-            'id' => 'myUsercentricsId',
-            'language' => 'en',
-        ])->shouldHaveBeenCalled();
+        $javaScripts = $event->getAssetCollector()->getJavaScripts();
+        self::assertArrayHasKey('usercentrics', $javaScripts);
+        self::assertSame([
+            'source' => 'https://app.usercentrics.eu/latest/main.js',
+            'attributes' => [
+                'type' => 'application/javascript',
+                'id' => 'myUsercentricsId',
+                'language' => 'en',
+            ],
+            'options' => [],
+        ], $javaScripts['usercentrics']);
     }
 
     /**
@@ -83,7 +75,9 @@ class PageRendererPreProcessTest extends UnitTestCase
      */
     public function addLibraryThrowsExceptionIfNoIdentifierGivenForFile(): void
     {
-        $this->templateService->setup = [
+        $this->expectExceptionCode(1583774683);
+
+        $this->mockTypoScriptFrontend([
             'plugin.' => [
                 'tx_usercentrics.' => [
                     'settingsId' => 'myUsercentricsId',
@@ -95,12 +89,10 @@ class PageRendererPreProcessTest extends UnitTestCase
                     ],
                 ],
             ],
-        ];
+        ]);
 
-        $this->expectExceptionCode(1583774683);
-
-        $pageRendererPreProcess = new PageRendererPreProcess($this->assetCollector->reveal());
-        $pageRendererPreProcess->addLibrary();
+        $event = new BeforeJavaScriptsRenderingEvent(new AssetCollector(), false, false);
+        (new UsercentricsLibrary())($event);
     }
 
     /**
@@ -108,7 +100,9 @@ class PageRendererPreProcessTest extends UnitTestCase
      */
     public function addLibraryThrowsExceptionIfNoFileGiven(): void
     {
-        $this->templateService->setup = [
+        $this->expectExceptionCode(1583774682);
+
+        $this->mockTypoScriptFrontend([
             'plugin.' => [
                 'tx_usercentrics.' => [
                     'settingsId' => 'myUsercentricsId',
@@ -119,12 +113,10 @@ class PageRendererPreProcessTest extends UnitTestCase
                     ],
                 ],
             ],
-        ];
+        ]);
 
-        $this->expectExceptionCode(1583774682);
-
-        $pageRendererPreProcess = new PageRendererPreProcess($this->assetCollector->reveal());
-        $pageRendererPreProcess->addLibrary();
+        $event = new BeforeJavaScriptsRenderingEvent(new AssetCollector(), false, false);
+        (new UsercentricsLibrary())($event);
     }
 
     /**
@@ -134,7 +126,7 @@ class PageRendererPreProcessTest extends UnitTestCase
     {
         $file = 'EXT:site/Resources/Public/JavaScript/test.js';
         $identifier = 'myIdentifier';
-        $this->templateService->setup = [
+        $this->mockTypoScriptFrontend([
             'plugin.' => [
                 'tx_usercentrics.' => [
                     'settingsId' => 'myUsercentricsId',
@@ -150,17 +142,26 @@ class PageRendererPreProcessTest extends UnitTestCase
                     ],
                 ],
             ],
-        ];
+        ]);
 
         $expectedAttributes = [
             'custom' => 'attribute',
             'type' => 'text/plain',
             'data-usercentrics' => $identifier
         ];
-        $pageRendererPreProcess = new PageRendererPreProcess($this->assetCollector->reveal());
-        $pageRendererPreProcess->addLibrary();
 
-        $this->assetCollector->addJavaScript($identifier, $file, $expectedAttributes);
+        $event = new BeforeJavaScriptsRenderingEvent(new AssetCollector(), false, false);
+        (new UsercentricsLibrary())($event);
+
+        $javaScripts = $event->getAssetCollector()->getJavaScripts();
+        $addedScript = current(array_filter($javaScripts, static function (string $usedIdentifier) use ($identifier) {
+            return str_starts_with($usedIdentifier, $identifier);
+        }, ARRAY_FILTER_USE_KEY));
+        self::assertSame([
+            'source' => 'EXT:site/Resources/Public/JavaScript/test.js',
+            'attributes' => $expectedAttributes,
+            'options' => [],
+        ], $addedScript);
     }
 
     /**
@@ -170,7 +171,7 @@ class PageRendererPreProcessTest extends UnitTestCase
     {
         $file = 'EXT:site/Resources/Public/JavaScript/test.js';
         $identifier = 'myIdentifier';
-        $this->templateService->setup = [
+        $this->mockTypoScriptFrontend([
             'plugin.' => [
                 'tx_usercentrics.' => [
                     'settingsId' => 'myUsercentricsId',
@@ -189,7 +190,7 @@ class PageRendererPreProcessTest extends UnitTestCase
                     ],
                 ],
             ],
-        ];
+        ]);
 
         $expectedAttributes = [
             'custom' => 'attribute',
@@ -199,10 +200,19 @@ class PageRendererPreProcessTest extends UnitTestCase
         $expectedOptions = [
             'priority' => true
         ];
-        $pageRendererPreProcess = new PageRendererPreProcess($this->assetCollector->reveal());
-        $pageRendererPreProcess->addLibrary();
 
-        $this->assetCollector->addJavaScript($identifier, $file, $expectedAttributes, $expectedOptions);
+        $event = new BeforeJavaScriptsRenderingEvent(new AssetCollector(), false, false);
+        (new UsercentricsLibrary())($event);
+
+        $javaScripts = $event->getAssetCollector()->getJavaScripts();
+        $addedScript = current(array_filter($javaScripts, static function (string $usedIdentifier) use ($identifier) {
+            return str_starts_with($usedIdentifier, $identifier);
+        }, ARRAY_FILTER_USE_KEY));
+        self::assertSame([
+            'source' => $file,
+            'attributes' => $expectedAttributes,
+            'options' => $expectedOptions,
+        ], $addedScript);
     }
 
     /**
@@ -210,7 +220,9 @@ class PageRendererPreProcessTest extends UnitTestCase
      */
     public function addLibraryThrowsExceptionIfNoIdentifierGivenForInlineJs(): void
     {
-        $this->templateService->setup = [
+        $this->expectExceptionCode(1583774685);
+
+        $this->mockTypoScriptFrontend([
             'plugin.' => [
                 'tx_usercentrics.' => [
                     'settingsId' => 'myUsercentricsId',
@@ -222,12 +234,10 @@ class PageRendererPreProcessTest extends UnitTestCase
                     ],
                 ],
             ],
-        ];
+        ]);
 
-        $this->expectExceptionCode(1583774685);
-
-        $pageRendererPreProcess = new PageRendererPreProcess($this->assetCollector->reveal());
-        $pageRendererPreProcess->addLibrary();
+        $event = new BeforeJavaScriptsRenderingEvent(new AssetCollector(), false, false);
+        (new UsercentricsLibrary())($event);
     }
 
     /**
@@ -237,7 +247,7 @@ class PageRendererPreProcessTest extends UnitTestCase
     {
         $value = 'alert(123);';
         $identifier = 'myIdentifier';
-        $this->templateService->setup = [
+        $this->mockTypoScriptFrontend([
             'plugin.' => [
                 'tx_usercentrics.' => [
                     'settingsId' => 'myUsercentricsId',
@@ -256,7 +266,7 @@ class PageRendererPreProcessTest extends UnitTestCase
                     ],
                 ],
             ],
-        ];
+        ]);
 
         $expectedAttributes = [
             'custom' => 'attribute',
@@ -266,9 +276,28 @@ class PageRendererPreProcessTest extends UnitTestCase
         $expectedOptions = [
             'priority' => true
         ];
-        $pageRendererPreProcess = new PageRendererPreProcess($this->assetCollector->reveal());
-        $pageRendererPreProcess->addLibrary();
 
-        $this->assetCollector->addInlineJavaScript($identifier, $value, $expectedAttributes, $expectedOptions);
+        $event = new BeforeJavaScriptsRenderingEvent(new AssetCollector(), false, false);
+        (new UsercentricsLibrary())($event);
+
+        $javaScripts = $event->getAssetCollector()->getInlineJavaScripts();
+        $addedScript = current(array_filter($javaScripts, static function (string $usedIdentifier) use ($identifier) {
+            return str_starts_with($usedIdentifier, $identifier);
+        }, ARRAY_FILTER_USE_KEY));
+        self::assertSame([
+            'source' => $value,
+            'attributes' => $expectedAttributes,
+            'options' => $expectedOptions,
+        ], $addedScript);
+    }
+
+    private function mockTypoScriptFrontend(array $setup = []): void
+    {
+        $templateService = $this->createMock(TemplateService::class);
+        $templateService->setup = $setup;
+
+        $tsfe = $this->createMock(TypoScriptFrontendController::class);
+        $tsfe->tmpl = $templateService;
+        $GLOBALS['TSFE'] = $tsfe;
     }
 }

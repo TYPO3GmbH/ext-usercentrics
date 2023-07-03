@@ -32,21 +32,25 @@
         "bin-dir": ".build/bin",
         "discard-changes": true,
         "optimize-autoloader": true,
-        "vendor-dir": ".build/vendor"
+        "vendor-dir": ".build/vendor",
+        "allow-plugins": {
+            "typo3/class-alias-loader": true,
+            "typo3/cms-composer-installers": true
+        }
     },
     "extra": {
         "typo3/cms": {
             "extension-key": "usercentrics",
-            "web-dir": ".build/web",
+            "web-dir": ".build/public",
             "app-dir": ".build"
         },
         "branch-alias": {
-            "dev-develop": "11.0.x-dev"
+            "dev-develop": "12.0.x-dev"
         }
     },
     "scripts": {
         "t3g:test:php:lint": [
-            "phplint"
+            "Build/tools/phplint/vendor/bin/phplint"
         ],
         "t3g:test:php:unit": [
             "phpunit -c Build/UnitTests.xml"
@@ -56,26 +60,24 @@
             "@t3g:test:php:unit"
         ],
         "t3g:cgl": [
-            "php-cs-fixer fix --config=.php_cs-fixer.dist.php -v --dry-run"
+            "Build/tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --config=.php_cs-fixer.dist.php -v --dry-run"
         ],
         "t3g:cgl:fix": [
-            "php-cs-fixer fix --config=.php_cs-fixer.dist.php"
+            "Build/tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --config=.php_cs-fixer.dist.php"
         ],
         "post-autoload-dump": [
-            "mkdir -p .build/web/typo3conf/ext/",
-            "[ -L .build/web/typo3conf/ext/usercentrics ] || ln -snvf ../../../../. .build/web/typo3conf/ext/usercentrics"
+            "[ -d .build/public/_assets ] || mkdir -p .build/public/typo3conf/ext/",
+            "[ -d .build/public/_assets ] || [ -L .build/public/typo3conf/ext/usercentrics ] || ln -snvf ../../../../. .build/public/typo3conf/ext/usercentrics"
         ]
     },
     "require": {
-        "php": "^7.2 || ^8.0",
+        "php": "^7.4 || ^8.0",
         "ext-json": "*",
-        "typo3/cms-core": "^10.4 || 11.*.*@dev"
+        "typo3/cms-core": "^11.4 || 12.4"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^v2.19",
         "roave/security-advisories": "dev-latest",
-        "typo3/testing-framework": "^4.9 || ^5.0 || ^6.3",
-        "bk2k/extension-helper": "^1.0",
-        "overtrue/phplint": "^3.0"
+        "typo3/testing-framework": "^7.0 || ^8.0",
+        "phpunit/phpunit": "^8.4 || ^9.0"
     }
 }

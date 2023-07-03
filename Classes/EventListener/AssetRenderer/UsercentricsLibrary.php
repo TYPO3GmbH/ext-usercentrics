@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * This file is part of the package t3g/usercentrics.
@@ -8,29 +8,20 @@ declare(strict_types = 1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace T3G\AgencyPack\Usercentrics\Hooks;
+namespace T3G\AgencyPack\Usercentrics\EventListener\AssetRenderer;
 
-use TYPO3\CMS\Core\Page\AssetCollector;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Page\Event\BeforeJavaScriptsRenderingEvent;
 use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
-class PageRendererPreProcess
+final class UsercentricsLibrary
 {
-
-    /**
-     * @var \TYPO3\CMS\Core\Page\AssetCollector
-     */
-    private $assetCollector;
-
-    public function __construct(AssetCollector $assetCollector = null)
+    public function __invoke(BeforeJavaScriptsRenderingEvent $event): void
     {
-        // hooks: no DI yet :(
-        $this->assetCollector = $assetCollector ?? GeneralUtility::makeInstance(AssetCollector::class);
-    }
+        if ($event->isInline()) {
+            return;
+        }
 
-    public function addLibrary(): void
-    {
         $config = $this->getTypoScriptConfiguration();
         if ($config === null) {
             return;
@@ -38,12 +29,12 @@ class PageRendererPreProcess
         if (!$this->isValidId($config)) {
             throw new \InvalidArgumentException('Usercentrics ID not configured, please set plugin.tx_usercentrics.settingsId in your TypoScript configuration', 1583774571);
         }
-        $this->addUsercentricsScript($config);
-        $this->addConfiguredJsFiles($config['jsFiles.'] ?? []);
-        $this->addConfiguredInlineJavaScript($config['jsInline.'] ?? []);
+        $this->addUsercentricsScript($event, $config);
+        $this->addConfiguredJsFiles($event, $config['jsFiles.'] ?? []);
+        $this->addConfiguredInlineJavaScript($event, $config['jsInline.'] ?? []);
     }
 
-    protected function addConfiguredInlineJavaScript(array $jsInline): void
+    protected function addConfiguredInlineJavaScript(BeforeJavaScriptsRenderingEvent $event, array $jsInline): void
     {
         foreach ($jsInline as $inline) {
             $code = $inline['value'] ?? '';
@@ -54,11 +45,11 @@ class PageRendererPreProcess
             $identifier = StringUtility::getUniqueId($dataProcessingService . '-');
             $attributes = $this->getAttributesForUsercentrics($inline['attributes.'] ?? [], $dataProcessingService);
             $options = $this->convertPriorityToBoolean($inline['options.'] ?? []);
-            $this->assetCollector->addInlineJavaScript($identifier, $code, $attributes, $options);
+            $event->getAssetCollector()->addInlineJavaScript($identifier, $code, $attributes, $options);
         }
     }
 
-    protected function addConfiguredJsFiles(array $jsFiles): void
+    protected function addConfiguredJsFiles(BeforeJavaScriptsRenderingEvent $event, array $jsFiles): void
     {
         foreach ($jsFiles as $jsFile) {
             if (!$this->isValidFile($jsFile)) {
@@ -71,13 +62,13 @@ class PageRendererPreProcess
             $identifier = StringUtility::getUniqueId($dataProcessingService . '-');
             $attributes = $this->getAttributesForUsercentrics($jsFile['attributes.'] ?? [], $dataProcessingService);
             $options = $this->convertPriorityToBoolean($jsFile['options.'] ?? []);
-            $this->assetCollector->addJavaScript($identifier, $jsFile['file'], $attributes, $options);
+            $event->getAssetCollector()->addJavaScript($identifier, $jsFile['file'], $attributes, $options);
         }
     }
 
-    protected function addUsercentricsScript(array $config): void
+    protected function addUsercentricsScript(BeforeJavaScriptsRenderingEvent $event, array $config): void
     {
-        $this->assetCollector->addJavaScript('usercentrics', 'https://app.usercentrics.eu/latest/main.js', [
+        $event->getAssetCollector()->addJavaScript('usercentrics', 'https://app.usercentrics.eu/latest/main.js', [
             'type' => 'application/javascript',
             'id' => $config['settingsId'],
             'language' => $config['language'],
@@ -105,7 +96,6 @@ class PageRendererPreProcess
         if (!isset($GLOBALS['TSFE']) || !($GLOBALS['TSFE'] instanceof TypoScriptFrontendController)) {
             return null;
         }
-        /** @var \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController $tsfe */
         $tsfe = $GLOBALS['TSFE'];
         $ts = $tsfe->tmpl->setup;
         return $ts['plugin.']['tx_usercentrics.'] ?? null;
@@ -123,27 +113,11 @@ class PageRendererPreProcess
 
     protected function isValidIdentifier(array $jsFile): bool
     {
-        if (isset($jsFile['dataServiceProcessor'])) {
-            trigger_error(
-                'The setting "dataServiceProcessor" has been marked as deprecated. Use dataProcessingService instead.',
-                E_USER_DEPRECATED
-            );
-            return isset($jsFile['dataServiceProcessor']) && is_string($jsFile['dataServiceProcessor']);
-        }
-
         return isset($jsFile['dataProcessingService']) && is_string($jsFile['dataProcessingService']);
     }
 
     protected function getDataProcessingService(array $configuration): string
     {
-        if (isset($configuration['dataServiceProcessor'])) {
-            trigger_error(
-                'The setting "dataServiceProcessor" has been marked as deprecated. Use dataProcessingService instead.',
-                E_USER_DEPRECATED
-            );
-            return $configuration['dataServiceProcessor'];
-        }
-
         return $configuration['dataProcessingService'];
     }
 }
