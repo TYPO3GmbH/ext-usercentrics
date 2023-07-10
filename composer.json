@@ -73,7 +73,7 @@
     "require": {
         "php": "^7.4 || ^8.0",
         "ext-json": "*",
-        "typo3/cms-core": "^11.4 || 12.4"
+        "typo3/cms-core": "^11.4 || ^12.4"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
