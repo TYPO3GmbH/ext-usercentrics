@@ -1,3 +1,9 @@
+# Caution: Development State
+
+This version does currently NOT provide a JS module for the settings editor.
+Therefore, scripts can only be managed via Site settings in YAML format.
+As this is due to time constraints, it will be added in the future.
+
 # Usercentrics Integration for TYPO3
 
 This extension integrates Usercentrics (Compliance and Consent Management) into TYPO3.
@@ -11,48 +17,42 @@ This extension integrates Usercentrics (Compliance and Consent Management) into 
 
 2. Activate the extension in the extension manager
 
-3. On every site where you want to use the extension, include the static TypoScript setup
+3. On every site where you want to use the extension, include the Site set
 
-4. Configure your Usercentrics ID by setting `plugin.tx_usercentrics.settingsId = <your-id>` in your TypoScript setup
+4. Configure your Usercentrics ID by setting `plugin.tx_usercentrics.settingsId = <your-id>` in your Site settings
 
 5. Configure the JS Files to be handled by Usercentrics:
 
 ```
-plugin.tx_usercentrics {
-    settingsId = {$plugin.tx_usercentrics.settingsId}
-    jsFiles {
-
+plugin:
+  tx_usercentrics:
+    settingsId: XXXXX
+    jsFiles:
+      -
         # Path to JS File (required)
-        10.file = EXT:site/Resources/Public/JavaScriyt/MyScriptFile.js
+        file: 'EXT:site/Resources/Public/JavaScriyt/MyScriptFile.js'
 
         # Identifier to use in Usercentrics (required)
-        10.dataProcessingService = My Data Processing Service
-
-        20.file = secondFile.js
-        20.dataProcessingService = My other Data Processing Service
+        dataProcessingService: My Data Processing Service
+      -
+        file: secondFile.js
+        dataProcessingService: My other Data Processing Service
 
         # attributes for the script tag (optional)
-        20.attributes {
-            async = async
-        }
+        attributes:
+          async: async
 
         # options for the TYPO3 AssetCollector
         # setting priority will render the script in the head instead of the footer section
-        20.options {
-            priority = 1
-        }
-    }
+        options:
+          priority: 1
 
-    jsInline {
-      10.value (
-        alert(123);
-      )
-      10.dataProcessingService = My Data Processing Service
-      10.attributes {
-        custom = attribute
-      }
-    }
-}
+    jsInline:
+      -
+        value: alert(123);
+        dataProcessingService: My Data Processing Service
+        attributes:
+          custom: attribute
 ```
 
 Note that the configured identifiers need to match your Usercentrics configuration.
@@ -64,8 +64,8 @@ You do not need to set the `type` or `data-usercentrics` attributes for the scri
 The extension comes with a custom view helper which can be used to add scripts via Fluid:
 
 ```html
-<usercentrics:script dataProcessingService="identifier123" src="EXT:my_ext/Resources/Public/JavaScript/foo.js" />
-<usercentrics:script dataProcessingService="identifier123">
+<usercentrics:script identifier="foo" dataProcessingService="identifier123" src="EXT:my_ext/Resources/Public/JavaScript/foo.js" />
+<usercentrics:script identifier="bar" dataProcessingService="identifier123">
    alert('hello world');
 </usercentrics:script>
 ```

@@ -15,7 +15,7 @@
 		verbose="false"
 >
 	<testsuites>
-		<testsuite name="Blog Extension">
+		<testsuite name="Usercentrics Extension">
 			<directory>../Tests/Unit</directory>
 		</testsuite>
 	</testsuites>

@@ -1,0 +1,32 @@
+categories:
+    Usercentrics:
+        label: 'Usercentrics'
+
+settings:
+    plugin.tx_usercentrics.settingsId:
+        label: 'Usercentrics ID'
+        description: 'Your usercentrics ID'
+        category: Usercentrics
+        type: string
+        default: ''
+
+    plugin.tx_usercentrics.language:
+        label: 'Language ISO code'
+        description: 'Language ISO code to use'
+        category: Usercentrics
+        type: string
+        default: 'current'
+
+    plugin.tx_usercentrics.jsFiles:
+        label: 'JS Files'
+        description: 'The JS files to load via Usercentrics.'
+        category: Usercentrics
+        type: uc_file
+        default: [ ]
+
+    plugin.tx_usercentrics.jsInline:
+        label: 'JS Inline Scripts'
+        description: 'The inline JS to load via Usercentrics.'
+        category: Usercentrics
+        type: uc_file
+        default: [ ]

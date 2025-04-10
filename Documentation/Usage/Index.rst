@@ -7,56 +7,51 @@
 Usage
 =====
 
-The foundation of the Usercentrics for TYPO3 Integration is the TYPO3's `Asset Collector`_.
+The foundation of the Usercentrics for TYPO3 Integration is TYPO3's `Asset Collector`_.
 This extensions offers multiple entry points to integrate external scripts and inline scripts guarded by Usercentrics.
 
 .. important::
    Each include requires an identifier which must match the data processing service name as configured in Usercentrics.
 
 
-TypoScript
-==========
+Site Settings
+=============
 
-In TypoScript, all scripts are configured within the :typoscript:`plugin.tx_usercentrics` namespace, which is divided
+In your settings, all scripts are configured within the :yaml:`plugin.tx_usercentrics` namespace, which is divided
 into two sections.
 
-External script files are configured within :typoscript:`plugin.tx_usercentrics.jsFiles`, whereas inline scripts are
-configured in :typoscript:`plugin.tx_usercentrics.jsInline`.
+External script files are configured within :yaml:`plugin.tx_usercentrics.jsFiles`, whereas inline scripts are
+configured in :yaml:`plugin.tx_usercentrics.jsInline`.
 
 The following arguments are accepted:
 
-* :typoscript:`dataProcessingService` (string) **mandatory** - the data processing service name as configured in Usercentrics
-* :typoscript:`file` (string) **mandatory for external files** - the path to the script file
-* :typoscript:`value` (string) **mandatory for inline scripts** - the JavaScript being rendered inline
-* :typoscript:`attributes` (array) - a key / value dictionary with attributes to be rendered in the :html:`<script>` tag
-* :typoscript:`priority` (bool) - defines whether an include is rendered in :html:`<head>` or at the bottom of :html:`<body>`
+* :yaml:`dataProcessingService` (string) **mandatory** - the data processing service name as configured in Usercentrics
+* :yaml:`file` (string) **mandatory for external files** - the path to the script file
+* :yaml:`value` (string) **mandatory for inline scripts** - the JavaScript being rendered inline
+* :yaml:`attributes` (array) - a key / value dictionary with attributes to be rendered in the :html:`<script>` tag
+* :yaml:`priority` (bool) - defines whether an include is rendered in :html:`<head>` or at the bottom of :html:`<body>`
 
 Example:
 
-.. code-block:: typoscript
+.. code-block:: yaml
 
-   plugin.tx_usercentrics {
-       jsFiles {
-           10 {
-               dataProcessingService = Google Analytics
-               file = https://www.google-analytics.com/analytics.js
-               attributes {
-                   async = async
-               }
-           }
-       }
+   plugin:
+     tx_usercentrics:
+       jsFiles:
+         -
+           dataProcessingService: Google Analytics
+           file: https://www.google-analytics.com/analytics.js
+           attributes:
+             async: async
 
-       jsInline {
-           10 {
-               dataProcessingService = Google Analytics
-               value (
-                   window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-                   ga('create', 'UA-XXXXX-Y', 'auto');
-                   ga('send', 'pageview');
-               )
-           }
-       }
-   }
+       jsInline:
+         -
+           dataProcessingService: Google Analytics
+           value: "
+             window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+             ga('create', 'UA-XXXXX-Y', 'auto');
+             ga('send', 'pageview');
+           "
 
 .. warning::
    In case Usercentrics is included into an existing project, all usages of :typoscript:`page.includeJS` and alike must
@@ -72,10 +67,10 @@ namespace may need to be imported.
 
 The following arguments are accepted:
 
-* :typoscript:`src` (string) **mandatory for external files** - the path to the script file
-* :typoscript:`dataProcessingService` (string) **mandatory** - the data processing service name as configured in Usercentrics
-* :typoscript:`attributes` (array) - a key / value dictionary with attributes to be rendered in the :html:`<script>` tag
-* :typoscript:`priority` (bool) - defines whether an include is rendered in :html:`<head>` or at the bottom of :html:`<body>`
+* :yaml:`src` (string) **mandatory for external files** - the path to the script file
+* :yaml:`dataProcessingService` (string) **mandatory** - the data processing service name as configured in Usercentrics
+* :yaml:`attributes` (array) - a key / value dictionary with attributes to be rendered in the :html:`<script>` tag
+* :yaml:`priority` (bool) - defines whether an include is rendered in :html:`<head>` or at the bottom of :html:`<body>`
 
 If inline scripts are used, the JavaScript must be written as content of the ViewHelper.
 
@@ -84,8 +79,8 @@ Example:
 .. code-block:: html
 
    <html xmlns:usercentrics="http://typo3.org/ns/T3G/AgencyPack/Usercentrics/ViewHelpers">
-     <usercentrics:script dataProcessingService="Google Analytics" src="https://www.google-analytics.com/analytics.js" />
-     <usercentrics:script dataProcessingService="Google Analytics">
+     <usercentrics:script identifier="foo" dataProcessingService="Google Analytics" src="https://www.google-analytics.com/analytics.js" />
+     <usercentrics:script identifier="bar" dataProcessingService="Google Analytics">
         window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
         ga('create', 'UA-XXXXX-Y', 'auto');
         ga('send', 'pageview');

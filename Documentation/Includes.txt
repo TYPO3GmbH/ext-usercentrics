@@ -11,6 +11,8 @@
 .. DEFINE SOME TEXTROLES
 .. --------------------------------------------------
 
+.. role::   yaml(code)
+
 .. role::   typoscript(code)
 
 .. role::   ts(typoscript)

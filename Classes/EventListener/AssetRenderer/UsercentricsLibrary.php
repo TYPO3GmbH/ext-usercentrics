@@ -10,28 +10,32 @@ declare(strict_types=1);
 
 namespace T3G\AgencyPack\Usercentrics\EventListener\AssetRenderer;
 
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Page\Event\BeforeJavaScriptsRenderingEvent;
+use TYPO3\CMS\Core\Site\Entity\NullSite;
+use TYPO3\CMS\Core\Site\Entity\SiteInterface;
+use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\StringUtility;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
-final class UsercentricsLibrary
+final readonly class UsercentricsLibrary
 {
     public function __invoke(BeforeJavaScriptsRenderingEvent $event): void
     {
-        if ($event->isInline()) {
+        if (!$event->isInline() || !$event->isPriority() || 1 !== $this->getRequest()->getAttribute('applicationType')) {
             return;
         }
 
-        $config = $this->getTypoScriptConfiguration();
+        $config = $this->getSettings();
         if ($config === null) {
             return;
         }
         if (!$this->isValidId($config)) {
-            throw new \InvalidArgumentException('Usercentrics ID not configured, please set plugin.tx_usercentrics.settingsId in your TypoScript configuration', 1583774571);
+            throw new \InvalidArgumentException('Usercentrics ID not configured, please set plugin.tx_usercentrics.settingsId in your settings', 1583774571);
         }
+
         $this->addUsercentricsScript($event, $config);
-        $this->addConfiguredJsFiles($event, $config['jsFiles.'] ?? []);
-        $this->addConfiguredInlineJavaScript($event, $config['jsInline.'] ?? []);
+        $this->addConfiguredJsFiles($event, $config['jsFiles'] ?? []);
+        $this->addConfiguredInlineJavaScript($event, $config['jsInline'] ?? []);
     }
 
     protected function addConfiguredInlineJavaScript(BeforeJavaScriptsRenderingEvent $event, array $jsInline): void
@@ -39,12 +43,12 @@ final class UsercentricsLibrary
         foreach ($jsInline as $inline) {
             $code = $inline['value'] ?? '';
             if (!$this->isValidIdentifier($inline)) {
-                throw new \InvalidArgumentException('No valid identifier given for inline JS, please check TypoScript configuration.', 1583774685);
+                throw new \InvalidArgumentException('No valid identifier given for inline JS, please check your settings.', 1583774685);
             }
             $dataProcessingService = $this->getDataProcessingService($inline);
             $identifier = StringUtility::getUniqueId($dataProcessingService . '-');
-            $attributes = $this->getAttributesForUsercentrics($inline['attributes.'] ?? [], $dataProcessingService);
-            $options = $this->convertPriorityToBoolean($inline['options.'] ?? []);
+            $attributes = $this->getAttributesForUsercentrics($inline['attributes'] ?? [], $dataProcessingService);
+            $options = $this->convertPriorityToBoolean($inline['options'] ?? []);
             $event->getAssetCollector()->addInlineJavaScript($identifier, $code, $attributes, $options);
         }
     }
@@ -52,16 +56,10 @@ final class UsercentricsLibrary
     protected function addConfiguredJsFiles(BeforeJavaScriptsRenderingEvent $event, array $jsFiles): void
     {
         foreach ($jsFiles as $jsFile) {
-            if (!$this->isValidFile($jsFile)) {
-                throw new \InvalidArgumentException('No valid file given, please check TypoScript configuration.', 1583774682);
-            }
-            if (!$this->isValidIdentifier($jsFile)) {
-                throw new \InvalidArgumentException('No valid identifier given for file, please check TypoScript configuration.', 1583774683);
-            }
             $dataProcessingService = $this->getDataProcessingService($jsFile);
             $identifier = StringUtility::getUniqueId($dataProcessingService . '-');
-            $attributes = $this->getAttributesForUsercentrics($jsFile['attributes.'] ?? [], $dataProcessingService);
-            $options = $this->convertPriorityToBoolean($jsFile['options.'] ?? []);
+            $attributes = $this->getAttributesForUsercentrics($jsFile['attributes'] ?? [], $dataProcessingService);
+            $options = $this->convertPriorityToBoolean($jsFile['options'] ?? []);
             $event->getAssetCollector()->addJavaScript($identifier, $jsFile['file'], $attributes, $options);
         }
     }
@@ -91,19 +89,29 @@ final class UsercentricsLibrary
         return $attributes;
     }
 
-    protected function getTypoScriptConfiguration(): ?array
+    protected function getSettings(): ?array
     {
-        if (!isset($GLOBALS['TSFE']) || !($GLOBALS['TSFE'] instanceof TypoScriptFrontendController)) {
+        /** @var SiteInterface|null $site */
+        $site = $this->getRequest()->getAttribute('site');
+
+        if (null === $site || $site instanceof NullSite) {
             return null;
         }
-        $tsfe = $GLOBALS['TSFE'];
-        $ts = $tsfe->tmpl->setup;
-        return $ts['plugin.']['tx_usercentrics.'] ?? null;
-    }
 
-    protected function isValidFile(array $jsFile): bool
-    {
-        return isset($jsFile['file']) && is_string($jsFile['file']);
+        $config = [
+            'settingsId' => $site->getSettings()->get('plugin.tx_usercentrics.settingsId'),
+            'language' => $site->getSettings()->get('plugin.tx_usercentrics.language'),
+            'jsFiles' => $site->getSettings()->get('plugin.tx_usercentrics.jsFiles'),
+            'jsInline' => $site->getSettings()->get('plugin.tx_usercentrics.jsInline'),
+        ];
+
+        if ('current' === $config['language']) {
+            /** @var SiteLanguage|null $siteLanguage */
+            $siteLanguage = $this->getRequest()->getAttribute('language');
+            $config['language'] = $siteLanguage?->getLocale()->getLanguageCode();
+        }
+
+        return $config;
     }
 
     protected function isValidId(array $config): bool
@@ -119,5 +127,10 @@ final class UsercentricsLibrary
     protected function getDataProcessingService(array $configuration): string
     {
         return $configuration['dataProcessingService'];
+    }
+
+    private function getRequest(): ServerRequestInterface
+    {
+        return $GLOBALS['TYPO3_REQUEST'];
     }
 }
