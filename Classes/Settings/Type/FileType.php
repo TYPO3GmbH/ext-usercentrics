@@ -26,6 +26,13 @@ readonly class FileType implements SettingsTypeInterface
 
     public function validate(mixed $value, SettingDefinition $definition): bool
     {
+        if (is_string($value)) {
+            try {
+                $value = json_decode($value, false, 4, JSON_THROW_ON_ERROR);
+            } catch (\JsonException) {
+                // invalid json, ignore and handle below
+            }
+        }
         if (!is_array($value)) {
             return false;
         }
@@ -46,12 +53,15 @@ readonly class FileType implements SettingsTypeInterface
             return $definition->default;
         }
 
-        return $value;
+        return array_map(static fn(array|object $entry) => is_object($entry) ? (array)$entry : $entry, $value);
     }
 
     public function doValidate(array $value, SettingDefinition $definition): bool
     {
         foreach ($value as $v) {
+            if (is_object($v)) {
+                $v = (array)$v;
+            }
             if (!is_array($v) || !isset($v['dataProcessingService']) || (!isset($v['file']) && !isset($v['value']))) {
                 return false;
             }
@@ -61,7 +71,6 @@ readonly class FileType implements SettingsTypeInterface
 
     public function getJavaScriptModule(): string
     {
-        // @TODO: create JS module
-        return '';
+        return '@t3g/usercentrics/settings/type/uc-file.js';
     }
 }
