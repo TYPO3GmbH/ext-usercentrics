@@ -45,7 +45,8 @@
             "app-dir": ".build"
         },
         "branch-alias": {
-            "dev-develop": "13.0.x-dev"
+            "dev-develop": "13.0.x-dev",
+            "dev-chore/typo3-14-compatibility": "14.0.x-dev"
         }
     },
     "scripts": {
@@ -73,11 +74,11 @@
     "require": {
         "php": "^8.2",
         "ext-json": "*",
-        "typo3/cms-core": "^13.4"
+        "typo3/cms-core": "^14.3"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "typo3/testing-framework": "^8.0 || ^9.0",
-        "phpunit/phpunit": "^10.1 || ^11.2"
+        "typo3/testing-framework": "^9.0",
+        "phpunit/phpunit": "^11.0 || ^12.0"
     }
 }

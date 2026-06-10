@@ -40,6 +40,18 @@ class ScriptViewHelper extends AbstractTagBasedViewHelper
 
     protected AssetCollector $assetCollector;
 
+    private const SCRIPT_ATTRIBUTES = [
+        'async',
+        'crossorigin',
+        'defer',
+        'integrity',
+        'nomodule',
+        'nonce',
+        'referrerpolicy',
+        'src',
+        'type',
+    ];
+
     public function injectAssetCollector(AssetCollector $assetCollector): void
     {
         $this->assetCollector = $assetCollector;
@@ -57,21 +69,25 @@ class ScriptViewHelper extends AbstractTagBasedViewHelper
             }
         );
         parent::initialize();
+        foreach (self::SCRIPT_ATTRIBUTES as $attributeName) {
+            if ($this->hasArgument($attributeName) && $this->arguments[$attributeName] !== null) {
+                $this->tag->addAttribute($attributeName, $this->arguments[$attributeName]);
+            }
+        }
     }
 
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerUniversalTagAttributes();
-        $this->registerTagAttribute('async', 'bool', 'Define that the script will be fetched in parallel to parsing and evaluation.', false);
-        $this->registerTagAttribute('crossorigin', 'string', 'Define how to handle crossorigin requests.', false);
-        $this->registerTagAttribute('defer', 'bool', 'Define that the script is meant to be executed after the document has been parsed.', false);
-        $this->registerTagAttribute('integrity', 'string', 'Define base64-encoded cryptographic hash of the resource that allows browsers to verify what they fetch.', false);
-        $this->registerTagAttribute('nomodule', 'bool', 'Define that the script should not be executed in browsers that support ES2015 modules.', false);
-        $this->registerTagAttribute('nonce', 'string', 'Define a cryptographic nonce (number used once) used to whitelist inline styles in a style-src Content-Security-Policy.', false);
-        $this->registerTagAttribute('referrerpolicy', 'string', 'Define which referrer is sent when fetching the resource.', false);
-        $this->registerTagAttribute('src', 'string', 'Define the URI of the external resource.', false);
-        $this->registerTagAttribute('type', 'string', 'Define the MIME type (usually \'text/javascript\').', false);
+        $this->registerArgument('async', 'bool', 'Define that the script will be fetched in parallel to parsing and evaluation.', false);
+        $this->registerArgument('crossorigin', 'string', 'Define how to handle crossorigin requests.', false);
+        $this->registerArgument('defer', 'bool', 'Define that the script is meant to be executed after the document has been parsed.', false);
+        $this->registerArgument('integrity', 'string', 'Define base64-encoded cryptographic hash of the resource that allows browsers to verify what they fetch.', false);
+        $this->registerArgument('nomodule', 'bool', 'Define that the script should not be executed in browsers that support ES2015 modules.', false);
+        $this->registerArgument('nonce', 'string', 'Define a cryptographic nonce (number used once) used to whitelist inline styles in a style-src Content-Security-Policy.', false);
+        $this->registerArgument('referrerpolicy', 'string', 'Define which referrer is sent when fetching the resource.', false);
+        $this->registerArgument('src', 'string', 'Define the URI of the external resource.', false);
+        $this->registerArgument('type', 'string', 'Define the MIME type (usually \'text/javascript\').', false);
         $this->registerArgument('useNonce', 'bool', 'Whether to use the global nonce value', false, false);
         $this->registerArgument(
             'identifier',
