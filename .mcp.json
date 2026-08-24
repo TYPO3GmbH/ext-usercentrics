@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "typo3-dev-companion": {
+            "type": "stdio",
+            "command": "php",
+            "args": [
+                "/home/benji/projects/typo3-cms-mcp/bin/typo3-dev-companion"
+            ]
+        }
+    }
+}
