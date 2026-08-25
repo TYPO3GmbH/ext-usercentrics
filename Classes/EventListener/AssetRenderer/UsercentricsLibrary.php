@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -11,6 +12,8 @@ declare(strict_types=1);
 namespace T3G\AgencyPack\Usercentrics\EventListener\AssetRenderer;
 
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Attribute\AsEventListener;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Page\Event\BeforeJavaScriptsRenderingEvent;
 use TYPO3\CMS\Core\Site\Entity\NullSite;
 use TYPO3\CMS\Core\Site\Entity\SiteInterface;
@@ -19,32 +22,43 @@ use TYPO3\CMS\Core\Utility\StringUtility;
 
 final readonly class UsercentricsLibrary
 {
+    #[AsEventListener(identifier: 'usercentrics/UsercentricsLibrary')]
     public function __invoke(BeforeJavaScriptsRenderingEvent $event): void
     {
-        if (!$event->isInline() || !$event->isPriority() || 1 !== $this->getRequest()->getAttribute('applicationType')) {
+        // The asset collector is filled once, right before the first of the four
+        // JavaScript buckets is rendered. All buckets are still open at that point.
+        if (!$event->isInline() || !$event->isPriority()) {
             return;
         }
 
-        $config = $this->getSettings();
+        $request = $this->getRequest();
+        if ($request === null || !$this->isFrontendRequest($request)) {
+            return;
+        }
+
+        $config = $this->getSettings($request);
         if ($config === null) {
             return;
         }
-        if (!$this->isValidId($config)) {
-            throw new \InvalidArgumentException('Usercentrics ID not configured, please set plugin.tx_usercentrics.settingsId in your settings', 1583774571);
+        if ($config['settingsId'] === '') {
+            throw new \InvalidArgumentException('Usercentrics ID not configured, please set plugin.tx_usercentrics.settingsId in your site settings', 1583774571);
         }
 
         $this->addUsercentricsScript($event, $config);
-        $this->addConfiguredJsFiles($event, $config['jsFiles'] ?? []);
-        $this->addConfiguredInlineJavaScript($event, $config['jsInline'] ?? []);
+        $this->addConfiguredJsFiles($event, $config['jsFiles']);
+        $this->addConfiguredInlineJavaScript($event, $config['jsInline']);
     }
 
     protected function addConfiguredInlineJavaScript(BeforeJavaScriptsRenderingEvent $event, array $jsInline): void
     {
         foreach ($jsInline as $inline) {
-            $code = $inline['value'] ?? '';
-            if (!$this->isValidIdentifier($inline)) {
-                throw new \InvalidArgumentException('No valid identifier given for inline JS, please check your settings.', 1583774685);
+            if (!is_array($inline)) {
+                throw new \InvalidArgumentException('No valid inline JS given, please check plugin.tx_usercentrics.jsInline in your site settings.', 1583774684);
             }
+            if (!$this->isValidIdentifier($inline)) {
+                throw new \InvalidArgumentException('No valid identifier given for inline JS, please check plugin.tx_usercentrics.jsInline in your site settings.', 1583774685);
+            }
+            $code = $inline['value'] ?? '';
             $dataProcessingService = $this->getDataProcessingService($inline);
             $identifier = StringUtility::getUniqueId($dataProcessingService . '-');
             $attributes = $this->getAttributesForUsercentrics($inline['attributes'] ?? [], $dataProcessingService);
@@ -56,6 +70,12 @@ final readonly class UsercentricsLibrary
     protected function addConfiguredJsFiles(BeforeJavaScriptsRenderingEvent $event, array $jsFiles): void
     {
         foreach ($jsFiles as $jsFile) {
+            if (!is_array($jsFile) || !$this->isValidFile($jsFile)) {
+                throw new \InvalidArgumentException('No valid file given, please check plugin.tx_usercentrics.jsFiles in your site settings.', 1583774682);
+            }
+            if (!$this->isValidIdentifier($jsFile)) {
+                throw new \InvalidArgumentException('No valid identifier given for file, please check plugin.tx_usercentrics.jsFiles in your site settings.', 1583774683);
+            }
             $dataProcessingService = $this->getDataProcessingService($jsFile);
             $identifier = StringUtility::getUniqueId($dataProcessingService . '-');
             $attributes = $this->getAttributesForUsercentrics($jsFile['attributes'] ?? [], $dataProcessingService);
@@ -89,39 +109,50 @@ final readonly class UsercentricsLibrary
         return $attributes;
     }
 
-    protected function getSettings(): ?array
+    /**
+     * Returns null whenever the site set is not applicable, which is the case for
+     * requests without a resolved site and for sites that do not include the set.
+     */
+    protected function getSettings(ServerRequestInterface $request): ?array
     {
         /** @var SiteInterface|null $site */
-        $site = $this->getRequest()->getAttribute('site');
-
-        if (null === $site || $site instanceof NullSite) {
+        $site = $request->getAttribute('site');
+        if ($site === null || $site instanceof NullSite) {
             return null;
         }
 
-        $config = [
-            'settingsId' => $site->getSettings()->get('plugin.tx_usercentrics.settingsId'),
-            'language' => $site->getSettings()->get('plugin.tx_usercentrics.language'),
-            'jsFiles' => $site->getSettings()->get('plugin.tx_usercentrics.jsFiles'),
-            'jsInline' => $site->getSettings()->get('plugin.tx_usercentrics.jsInline'),
-        ];
-
-        if ('current' === $config['language']) {
-            /** @var SiteLanguage|null $siteLanguage */
-            $siteLanguage = $this->getRequest()->getAttribute('language');
-            $config['language'] = $siteLanguage?->getLocale()->getLanguageCode();
+        $settings = $site->getSettings();
+        $settingsId = $settings->get('plugin.tx_usercentrics.settingsId');
+        if (!is_string($settingsId)) {
+            // Site set is not included for this site.
+            return null;
         }
 
-        return $config;
+        $language = $settings->get('plugin.tx_usercentrics.language', 'current');
+        if ($language === 'current') {
+            /** @var SiteLanguage|null $siteLanguage */
+            $siteLanguage = $request->getAttribute('language');
+            $language = $siteLanguage?->getLocale()->getLanguageCode() ?? '';
+        }
+
+        return [
+            'settingsId' => $settingsId,
+            'language' => (string)$language,
+            'jsFiles' => (array)($settings->get('plugin.tx_usercentrics.jsFiles') ?? []),
+            'jsInline' => (array)($settings->get('plugin.tx_usercentrics.jsInline') ?? []),
+        ];
     }
 
-    protected function isValidId(array $config): bool
+    protected function isValidFile(array $jsFile): bool
     {
-        return isset($config['settingsId']) && is_string($config['settingsId']);
+        return isset($jsFile['file']) && is_string($jsFile['file']) && $jsFile['file'] !== '';
     }
 
-    protected function isValidIdentifier(array $jsFile): bool
+    protected function isValidIdentifier(array $configuration): bool
     {
-        return isset($jsFile['dataProcessingService']) && is_string($jsFile['dataProcessingService']);
+        return isset($configuration['dataProcessingService'])
+            && is_string($configuration['dataProcessingService'])
+            && $configuration['dataProcessingService'] !== '';
     }
 
     protected function getDataProcessingService(array $configuration): string
@@ -129,8 +160,20 @@ final readonly class UsercentricsLibrary
         return $configuration['dataProcessingService'];
     }
 
-    private function getRequest(): ServerRequestInterface
+    /**
+     * Deliberately not using ApplicationType::fromRequest(), which throws for requests
+     * that are neither frontend nor backend, for example CLI requests.
+     */
+    private function isFrontendRequest(ServerRequestInterface $request): bool
     {
-        return $GLOBALS['TYPO3_REQUEST'];
+        $applicationType = $request->getAttribute('applicationType');
+        return is_int($applicationType)
+            && ($applicationType & SystemEnvironmentBuilder::REQUESTTYPE_FE) === SystemEnvironmentBuilder::REQUESTTYPE_FE;
+    }
+
+    private function getRequest(): ?ServerRequestInterface
+    {
+        $request = $GLOBALS['TYPO3_REQUEST'] ?? null;
+        return $request instanceof ServerRequestInterface ? $request : null;
     }
 }

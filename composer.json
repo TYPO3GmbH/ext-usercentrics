@@ -1,6 +1,6 @@
 {
     "name": "t3g/usercentrics",
-    "description": "This extension provides a usercentrics integration into TYPO3.",
+    "description": "Usercentrics Integration for TYPO3 - Integrates Usercentrics (Compliance and Consent Management) into TYPO3.",
     "type": "typo3-cms-extension",
     "license": "GPL-2.0-or-later",
     "minimum-stability": "dev",
@@ -15,8 +15,20 @@
     "homepage": "https://extensions.typo3.org/extension/usercentrics/",
     "support": {
         "issues": "https://github.com/TYPO3GmbH/ext-usercentrics/issues",
-        "docs": "https://docs.typo3.org/typo3cms/extensions/usercentrics/",
+        "docs": "https://docs.typo3.org/p/t3g/usercentrics/main/en-us/",
         "source": "https://github.com/TYPO3GmbH/ext-usercentrics"
+    },
+    "require": {
+        "php": "^8.2",
+        "ext-json": "*",
+        "typo3/cms-backend": "^13.4.15 || ^14.3",
+        "typo3/cms-core": "^13.4.15 || ^14.3",
+        "typo3/cms-fluid": "^13.4.15 || ^14.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0 || ^12.0",
+        "roave/security-advisories": "dev-latest",
+        "typo3/testing-framework": "^9.0"
     },
     "autoload": {
         "psr-4": {
@@ -32,6 +44,7 @@
         "bin-dir": ".build/bin",
         "discard-changes": true,
         "optimize-autoloader": true,
+        "sort-packages": true,
         "vendor-dir": ".build/vendor",
         "allow-plugins": {
             "typo3/class-alias-loader": true,
@@ -42,11 +55,14 @@
         "typo3/cms": {
             "extension-key": "usercentrics",
             "web-dir": ".build/public",
-            "app-dir": ".build"
+            "app-dir": ".build",
+            "version": "13.0.0",
+            "Package": {
+                "providesPackages": {}
+            }
         },
         "branch-alias": {
-            "dev-develop": "13.0.x-dev",
-            "dev-chore/typo3-14-compatibility": "14.0.x-dev"
+            "dev-develop": "13.0.x-dev"
         }
     },
     "scripts": {
@@ -70,15 +86,5 @@
             "[ -d .build/public/_assets ] || mkdir -p .build/public/typo3conf/ext/",
             "[ -d .build/public/_assets ] || [ -L .build/public/typo3conf/ext/usercentrics ] || ln -snvf ../../../../. .build/public/typo3conf/ext/usercentrics"
         ]
-    },
-    "require": {
-        "php": "^8.2",
-        "ext-json": "*",
-        "typo3/cms-core": "^14.3"
-    },
-    "require-dev": {
-        "roave/security-advisories": "dev-latest",
-        "typo3/testing-framework": "^9.0",
-        "phpunit/phpunit": "^11.0 || ^12.0"
     }
 }

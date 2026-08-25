@@ -49,14 +49,14 @@ readonly class FileType implements SettingsTypeInterface
             }
         }
         if (!is_array($value) || !$this->doValidate($value, $definition)) {
-            $this->logger->warning('Setting validation field, reverting to default: {key}', ['key' => $definition->key]);
-            return $definition->default;
+            $this->logger->warning('Setting validation failed, reverting to default: {key}', ['key' => $definition->key]);
+            return is_array($definition->default) ? $definition->default : [];
         }
 
         return array_map(static fn (array|object $entry) => is_object($entry) ? (array)$entry : $entry, $value);
     }
 
-    public function doValidate(array $value, SettingDefinition $definition): bool
+    private function doValidate(array $value, SettingDefinition $definition): bool
     {
         foreach ($value as $v) {
             if (is_object($v)) {
