@@ -1,0 +1,10 @@
+# Minimal page rendering for the development installation. This set exists only
+# so the extension can be looked at in a browser; it is never released.
+page = PAGE
+page {
+    10 = FLUIDTEMPLATE
+    10 {
+        templateName = Demo
+        templateRootPaths.10 = EXT:usercentrics_demo/Resources/Private/Templates/
+    }
+}
