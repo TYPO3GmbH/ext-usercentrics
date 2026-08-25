@@ -6,3 +6,5 @@ extensions:
 exclude:
     - .build
     - Build
+    - config
+    - var
