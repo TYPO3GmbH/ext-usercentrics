@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<guides
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://typo3.org/schemas/docs/guides.xsd"
+    links-are-relative="true"
+>
+    <project
+        title="Usercentrics Integration for TYPO3"
+        release="13.0.0"
+        copyright="by TYPO3 GmbH"
+    />
+
+    <inventory id="t3coreapi" url="https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/"/>
+    <inventory id="t3viewhelper" url="https://docs.typo3.org/other/typo3/view-helper-reference/main/en-us/"/>
+</guides>
