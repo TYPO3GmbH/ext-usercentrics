@@ -14,6 +14,7 @@ use T3G\AgencyPack\Usercentrics\EventListener\AssetRenderer\UsercentricsLibrary;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Page\Event\BeforeJavaScriptsRenderingEvent;
+use TYPO3\CMS\Core\Settings\Settings;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteSettings;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
@@ -309,7 +310,7 @@ class UsercentricsLibraryTest extends UnitTestCase
                 $settingsMap['plugin.tx_usercentrics.' . $key] = $value;
             }
 
-            $settings = SiteSettings::create($settingsMap, $settingsTree);
+            $settings = SiteSettings::create(new Settings($settingsMap));
         } else {
             $settings = SiteSettings::createFromSettingsTree($settingsTree);
         }
