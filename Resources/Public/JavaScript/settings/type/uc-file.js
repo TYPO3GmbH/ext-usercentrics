@@ -1,5 +1,4 @@
 import { html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
 import { live } from 'lit/directives/live.js';
 import { BaseElement } from '@typo3/backend/settings/type/base.js';
 
@@ -11,7 +10,7 @@ const defaultEntry = {
     value: '',
 };
 
-export class UcfileTypeElement extends BaseElement {
+export class UcFileTypeElement extends BaseElement {
 
     static properties = {
         value: { type: Array },
@@ -40,6 +39,7 @@ export class UcfileTypeElement extends BaseElement {
                             class="form-control"
                             ?readonly=${this.readonly}
                             .value=${live(value[propertyName] ?? '')}
+                            placeholder="${propertyName}"
                             @change=${(e) => this.updateValue(e.target.value, index, propertyName)}
                         />
                     </td>
@@ -67,13 +67,13 @@ export class UcfileTypeElement extends BaseElement {
                 <div class="table-fit">
                     <table class="table table-hover">
                         <tbody>
-                            ${this.value.map((v, i) => this.renderItem(v, i))}
+                        ${this.value.map((v, i) => this.renderItem(v, i))}
                         </tbody>
                     </table>
                 </div>
             </div>
         `;
     }
-};
+}
 
-window.customElements.define(componentName, UcfileTypeElement);
+window.customElements.define(componentName, UcFileTypeElement);

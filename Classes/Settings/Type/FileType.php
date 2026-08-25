@@ -53,7 +53,7 @@ readonly class FileType implements SettingsTypeInterface
             return $definition->default;
         }
 
-        return array_map(static fn(array|object $entry) => is_object($entry) ? (array)$entry : $entry, $value);
+        return array_map(static fn (array|object $entry) => is_object($entry) ? (array)$entry : $entry, $value);
     }
 
     public function doValidate(array $value, SettingDefinition $definition): bool
@@ -62,7 +62,7 @@ readonly class FileType implements SettingsTypeInterface
             if (is_object($v)) {
                 $v = (array)$v;
             }
-            if (!is_array($v) || !isset($v['dataProcessingService']) || (!isset($v['file']) && !isset($v['value']))) {
+            if (!is_array($v) || '' === ($v['dataProcessingService'] ?? '') || ('' === ($v['file'] ?? '') && '' === ($v['value'] ?? ''))) {
                 return false;
             }
         }
