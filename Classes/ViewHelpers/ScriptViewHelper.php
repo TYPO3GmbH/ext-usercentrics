@@ -23,20 +23,13 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
  *
  * ::
  *
- *    <usercentrics:script dataProcessingService="Data Service" src="EXT:my_ext/Resources/Public/JavaScript/foo.js" />
- *    <usercentrics:script dataProcessingService="Data Service">
+ *    <usercentrics:script identifier="foo" dataProcessingService="Data Service" src="EXT:my_ext/Resources/Public/JavaScript/foo.js" />
+ *    <usercentrics:script identifier="bar" dataProcessingService="Data Service">
  *       alert('hello world');
  *    </usercentrics:script>
  */
 class ScriptViewHelper extends AbstractTagBasedViewHelper
 {
-    /**
-     * This VH does not produce direct output, thus does not need to be wrapped in an escaping node
-     *
-     * @var bool
-     */
-    protected $escapeOutput = false;
-
     /**
      * Rendered children string is passed as JavaScript code,
      * there is no point in HTML encoding anything from that.

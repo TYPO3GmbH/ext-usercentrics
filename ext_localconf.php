@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package t3g/usercentrics.
  *
@@ -7,11 +9,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-if (!defined('TYPO3')) {
-    die('Access denied.');
-}
+defined('TYPO3') or die();
 
-call_user_func(static function () {
-    // Register "usercentrics" as global fluid namespace
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['usercentrics'][] = 'T3G\\AgencyPack\\Usercentrics\\ViewHelpers';
-});
+// Register "usercentrics" as global fluid namespace
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['usercentrics'][] = 'T3G\\AgencyPack\\Usercentrics\\ViewHelpers';

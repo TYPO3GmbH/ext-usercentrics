@@ -1,4 +1,0 @@
-plugin.tx_usercentrics {
-    settingsId = {$plugin.tx_usercentrics.settingsId}
-    language = {$plugin.tx_usercentrics.language}
-}
