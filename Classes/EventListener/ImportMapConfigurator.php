@@ -18,7 +18,8 @@ class ImportMapConfigurator
     #[AsEventListener]
     public function __invoke(ResolveJavaScriptImportEvent $event): void
     {
-        // @todo Fix setting editor to provide a tag
+        // TYPO3 does not provide a way to add custom settings types yet.
+        // Therefore, this event listener is used for now.
         if ($event->specifier === '@typo3/backend/settings/editor.js') {
             $event->importMap->includeImportsFor('@t3g/usercentrics/settings/type/uc-file.js');
         }

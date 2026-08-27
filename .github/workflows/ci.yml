@@ -1,51 +1,81 @@
 name: CI
 
-on: [push]
+on:
+  push:
+  pull_request:
 
 jobs:
-  build:
+  cgl:
+    name: CGL and lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --strict --no-check-lock
+
+      - name: Install dependencies
+        run: composer install --no-progress --ansi
+
+      - name: Install dev tools
+        run: |
+          for tool in `ls -1 Build/tools`; do
+            composer install --working-dir="Build/tools/$tool" --no-progress --ansi
+          done
+
+      - name: CGL
+        run: composer t3g:cgl
+
+      - name: Lint PHP
+        run: composer t3g:test:php:lint
+
+  tests:
+    name: TYPO3 ${{ matrix.typo3 }} on PHP ${{ matrix.php }} (${{ matrix.dependencies }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        typo3: [^13.4]
+        typo3: ['^13.4', '^14.3']
         php: ['8.2', '8.3', '8.4']
+        dependencies: ['highest']
         include:
-          - typo3: ^13.4
+          # Proves the lower bound the extension declares for TYPO3 v13.
+          - typo3: '^13.4'
             php: '8.2'
-          - typo3: ^13.4
-            php: '8.3'
-          - typo3: ^13.4
-            php: '8.4'
+            dependencies: 'lowest'
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
 
-    - name: Setup PHP ${{ matrix.php }}
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php }}
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo_sqlite, sqlite3
+          coverage: none
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate
+      - name: Install dependencies
+        run: |
+          composer update \
+            --with "typo3/cms-core:${{ matrix.typo3 }}" \
+            ${{ matrix.dependencies == 'lowest' && '--prefer-lowest' || '' }} \
+            --no-progress --ansi
 
-    - name: Install dependencies
-      run: |
-        composer require typo3/cms-core:${{ matrix.typo3 }} --no-progress --ansi
-        git checkout composer.json
+      # Informational only: "composer show" takes a single package, and a
+      # diagnostic step must not be able to fail the build.
+      - name: Show installed versions
+        run: composer show --locked
 
-    - name: Install dev tools
-      run: |
-        for tool in `ls -1 Build/tools`; do
-          composer install --working-dir="Build/tools/$tool" --no-progress --ansi
-        done
+      - name: Unit Tests
+        run: composer t3g:test:php:unit
 
-    - name: CGL
-      run: composer t3g:cgl
-
-    - name: Lint PHP
-      run: composer t3g:test:php:lint
-
-    - name: Unit Tests
-      run: composer t3g:test:php:unit
+      - name: Functional Tests
+        env:
+          typo3DatabaseDriver: pdo_sqlite
+        run: composer t3g:test:php:functional

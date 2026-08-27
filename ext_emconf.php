@@ -7,18 +7,19 @@
  * LICENSE file that was distributed with this source code.
  */
 
-$EM_CONF[$_EXTKEY] = [
-    'title' => 'TYPO3 Usercentrics Extension',
-    'description' => '',
+$EM_CONF['usercentrics'] = [
+    'title' => 'Usercentrics Integration for TYPO3',
+    'description' => 'Integrates Usercentrics (Compliance and Consent Management) into TYPO3.',
     'category' => 'fe',
     'state' => 'stable',
     'clearCacheOnLoad' => 0,
     'author' => 'TYPO3 GmbH',
     'author_email' => 'info@typo3.com',
-    'version' => '14.0.0-dev',
+    'version' => '13.0.0',
     'constraints' => [
         'depends' => [
-            'typo3' => '14.3.0-14.9.99',
+            'typo3' => '13.4.15-14.3.99',
+            'fluid' => '13.4.15-14.3.99',
         ],
         'conflicts' => [],
         'suggests' => [],

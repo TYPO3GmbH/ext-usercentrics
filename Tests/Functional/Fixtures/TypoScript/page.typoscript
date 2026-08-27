@@ -1,0 +1,5 @@
+page = PAGE
+page.10 = TEXT
+page.10.value = Usercentrics functional test page
+page.20 = FLUIDTEMPLATE
+page.20.file = EXT:usercentrics/Tests/Functional/Fixtures/Templates/Script.html

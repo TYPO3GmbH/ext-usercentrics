@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 /*
  * This file is part of the package t3g/usercentrics.
@@ -10,8 +11,8 @@ declare(strict_types = 1);
 
 namespace T3G\AgencyPack\Usercentrics\ViewHelpers;
 
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Page\AssetCollector;
-use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
@@ -38,8 +39,14 @@ class ScriptViewHelper extends AbstractTagBasedViewHelper
      */
     protected $escapeChildren = false;
 
-    protected AssetCollector $assetCollector;
+    /**
+     * @var string
+     */
+    protected $tagName = 'script';
 
+    /**
+     * Attributes that are forwarded to the script tag.
+     */
     private const SCRIPT_ATTRIBUTES = [
         'async',
         'crossorigin',
@@ -52,14 +59,13 @@ class ScriptViewHelper extends AbstractTagBasedViewHelper
         'type',
     ];
 
-    public function injectAssetCollector(AssetCollector $assetCollector): void
+    public function __construct(protected AssetCollector $assetCollector)
     {
-        $this->assetCollector = $assetCollector;
+        parent::__construct();
     }
 
     public function initialize(): void
     {
-        // Add a tag builder, that does not html encode values, because rendering with encoding happens in AssetRenderer
         $this->setTagBuilder(
             new class() extends TagBuilder {
                 public function addAttribute($attributeName, $attributeValue, $escapeSpecialCharacters = false): void
@@ -70,7 +76,7 @@ class ScriptViewHelper extends AbstractTagBasedViewHelper
         );
         parent::initialize();
         foreach (self::SCRIPT_ATTRIBUTES as $attributeName) {
-            if ($this->hasArgument($attributeName) && $this->arguments[$attributeName] !== null) {
+            if ($this->hasArgument($attributeName)) {
                 $this->tag->addAttribute($attributeName, $this->arguments[$attributeName]);
             }
         }
@@ -79,16 +85,17 @@ class ScriptViewHelper extends AbstractTagBasedViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument('async', 'bool', 'Define that the script will be fetched in parallel to parsing and evaluation.', false);
-        $this->registerArgument('crossorigin', 'string', 'Define how to handle crossorigin requests.', false);
-        $this->registerArgument('defer', 'bool', 'Define that the script is meant to be executed after the document has been parsed.', false);
-        $this->registerArgument('integrity', 'string', 'Define base64-encoded cryptographic hash of the resource that allows browsers to verify what they fetch.', false);
-        $this->registerArgument('nomodule', 'bool', 'Define that the script should not be executed in browsers that support ES2015 modules.', false);
-        $this->registerArgument('nonce', 'string', 'Define a cryptographic nonce (number used once) used to whitelist inline styles in a style-src Content-Security-Policy.', false);
-        $this->registerArgument('referrerpolicy', 'string', 'Define which referrer is sent when fetching the resource.', false);
-        $this->registerArgument('src', 'string', 'Define the URI of the external resource.', false);
-        $this->registerArgument('type', 'string', 'Define the MIME type (usually \'text/javascript\').', false);
-        $this->registerArgument('useNonce', 'bool', 'Whether to use the global nonce value', false, false);
+        $this->registerArgument('async', 'bool', 'Define that the script will be fetched in parallel to parsing and evaluation.');
+        $this->registerArgument('crossorigin', 'string', 'Define how to handle crossorigin requests.');
+        $this->registerArgument('defer', 'bool', 'Define that the script is meant to be executed after the document has been parsed.');
+        $this->registerArgument('integrity', 'string', 'Define base64-encoded cryptographic hash of the resource that allows browsers to verify what they fetch.');
+        $this->registerArgument('nomodule', 'bool', 'Define that the script should not be executed in browsers that support ES2015 modules.');
+        $this->registerArgument('nonce', 'string', 'Define a cryptographic nonce (number used once) used to whitelist inline styles in a style-src Content-Security-Policy.');
+        $this->registerArgument('referrerpolicy', 'string', 'Define which referrer is sent when fetching the resource.');
+        $this->registerArgument('src', 'string', 'Define the URI of the external resource.');
+        $this->registerArgument('type', 'string', 'Define the MIME type (usually \'text/javascript\').');
+        $this->registerArgument('useNonce', 'mixed', 'Whether to use the global nonce value');
+        $this->registerArgument('csp', 'bool', 'Whether to collect a CSP hash value for this asset', false, false);
         $this->registerArgument(
             'identifier',
             'string',
@@ -108,15 +115,30 @@ class ScriptViewHelper extends AbstractTagBasedViewHelper
     public function render(): string
     {
         $dataProcessingService = $this->getDataProcessingService();
-        $identifier = StringUtility::getUniqueId($dataProcessingService . '-');
+        $identifier = $this->arguments['identifier'];
         $attributes = $this->tag->getAttributes();
         $attributes['type'] = 'text/plain';
         $attributes['data-usercentrics'] = $dataProcessingService;
         $src = $this->tag->getAttribute('src');
         unset($attributes['src']);
         $options = [
-            'priority' => $this->arguments['priority']
+            'priority' => $this->arguments['priority'],
         ];
+        // backwards compatibility for useNonce argument in v14
+        if (isset($this->arguments['useNonce']) && $this->arguments['useNonce'] !== null) {
+            $useNonce = filter_var($this->arguments['useNonce'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($this->isTypo3Version14OrHigher()) {
+                trigger_error(
+                    'Using the \'useNonce\' attribute on <usercentrics:script> is deprecated in TYPO3 v14. Please use the \'csp\' attribute instead.',
+                    E_USER_DEPRECATED
+                );
+                $options['csp'] = $useNonce;
+            } else {
+                $options['useNonce'] = $useNonce;
+            }
+        } else {
+            $options['csp'] = $this->arguments['csp'];
+        }
         if ($src !== null) {
             $this->assetCollector->addJavaScript($identifier, html_entity_decode($src), $attributes, $options);
         } else {
@@ -131,5 +153,10 @@ class ScriptViewHelper extends AbstractTagBasedViewHelper
     protected function getDataProcessingService(): string
     {
         return $this->arguments['dataProcessingService'];
+    }
+
+    protected function isTypo3Version14OrHigher(): bool
+    {
+        return (new Typo3Version())->getMajorVersion() >= 14;
     }
 }

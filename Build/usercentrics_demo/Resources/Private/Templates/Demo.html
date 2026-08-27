@@ -1,0 +1,29 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:usercentrics="http://typo3.org/ns/T3G/AgencyPack/Usercentrics/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<usercentrics:script identifier="demo-viewhelper-file"
+                     dataProcessingService="ViewHelper File Service"
+                     src="EXT:usercentrics/Resources/Public/Icons/Extension.svg"
+                     async="1"
+                     class="consent-script"
+                     data-foo="bar" />
+<usercentrics:script identifier="demo-viewhelper-priority"
+                     dataProcessingService="ViewHelper Priority Service"
+                     src="EXT:usercentrics/Resources/Public/Icons/Extension.svg"
+                     priority="1" />
+<usercentrics:script identifier="demo-viewhelper-inline"
+                     dataProcessingService="ViewHelper Inline Service">alert('viewhelper inline');</usercentrics:script>
+
+<h1>Usercentrics development page</h1>
+<p>
+    Every script below is registered through the extension. Look at the page source:
+    each one has to carry <code>type="text/plain"</code> and a
+    <code>data-usercentrics</code> attribute, otherwise it would run before consent
+    was given.
+</p>
+<ul>
+    <li>From the site settings: <code>Google Analytics</code> and <code>Custom Inline Service</code></li>
+    <li>From the ViewHelper: <code>ViewHelper File Service</code>, <code>ViewHelper Priority Service</code>, <code>ViewHelper Inline Service</code></li>
+</ul>
+</html>

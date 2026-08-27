@@ -14,11 +14,13 @@ composer.lock
 .build/
 .ddev/**/*.example
 .ddev/**/*.txt
-.ddev/commands/
+Build/.phpunit.cache/
 Build/.phpunit.result.cache
 Documentation-GENERATED-temp/
 node_modules/
 var/
+
+# The installation TYPO3 writes below the Composer root
 config/
 
 # CGL Fixer

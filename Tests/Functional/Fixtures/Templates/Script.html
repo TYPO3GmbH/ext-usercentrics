@@ -1,0 +1,15 @@
+<html xmlns:usercentrics="http://typo3.org/ns/T3G/AgencyPack/Usercentrics/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<usercentrics:script identifier="viewhelper-file"
+                     dataProcessingService="ViewHelper File Service"
+                     src="EXT:usercentrics/Resources/Public/Icons/Extension.svg"
+                     async="1"
+                     class="consent-script"
+                     data-foo="bar" />
+<usercentrics:script identifier="viewhelper-inline"
+                     dataProcessingService="ViewHelper Inline Service">alert('viewhelper inline');</usercentrics:script>
+<usercentrics:script identifier="viewhelper-priority"
+                     dataProcessingService="ViewHelper Priority Service"
+                     src="EXT:usercentrics/Resources/Public/Icons/Extension.svg"
+                     priority="1" />
+</html>
