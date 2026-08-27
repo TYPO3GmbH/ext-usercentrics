@@ -232,7 +232,7 @@ final class UsercentricsLibraryTest extends UnitTestCase
     public function throwsExceptionForJsFileWithoutFile(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionCode(1583774682);
+        $this->expectExceptionCode(1787814745);
 
         $this->setUpRequest([
             'settingsId' => 'myUsercentricsId',
@@ -246,7 +246,7 @@ final class UsercentricsLibraryTest extends UnitTestCase
     public function throwsExceptionForJsFileWithoutDataProcessingService(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionCode(1583774683);
+        $this->expectExceptionCode(1787814751);
 
         $this->setUpRequest([
             'settingsId' => 'myUsercentricsId',

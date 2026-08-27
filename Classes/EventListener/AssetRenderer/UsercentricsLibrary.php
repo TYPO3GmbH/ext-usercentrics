@@ -25,8 +25,6 @@ final readonly class UsercentricsLibrary
     #[AsEventListener(identifier: 'usercentrics/UsercentricsLibrary')]
     public function __invoke(BeforeJavaScriptsRenderingEvent $event): void
     {
-        // The asset collector is filled once, right before the first of the four
-        // JavaScript buckets is rendered. All buckets are still open at that point.
         if (!$event->isInline() || !$event->isPriority()) {
             return;
         }
@@ -71,10 +69,10 @@ final readonly class UsercentricsLibrary
     {
         foreach ($jsFiles as $jsFile) {
             if (!is_array($jsFile) || !$this->isValidFile($jsFile)) {
-                throw new \InvalidArgumentException('No valid file given, please check plugin.tx_usercentrics.jsFiles in your site settings.', 1583774682);
+                throw new \InvalidArgumentException('No valid file given, please check plugin.tx_usercentrics.jsFiles in your site settings.', 1787814745);
             }
             if (!$this->isValidIdentifier($jsFile)) {
-                throw new \InvalidArgumentException('No valid identifier given for file, please check plugin.tx_usercentrics.jsFiles in your site settings.', 1583774683);
+                throw new \InvalidArgumentException('No valid identifier given for file, please check plugin.tx_usercentrics.jsFiles in your site settings.', 1787814751);
             }
             $dataProcessingService = $this->getDataProcessingService($jsFile);
             $identifier = StringUtility::getUniqueId($dataProcessingService . '-');
@@ -110,8 +108,7 @@ final readonly class UsercentricsLibrary
     }
 
     /**
-     * Returns null whenever the site set is not applicable, which is the case for
-     * requests without a resolved site and for sites that do not include the set.
+     * @return array{settingsId: string, language: string, jsFiles: mixed[], jsInline: mixed[]}|null
      */
     protected function getSettings(ServerRequestInterface $request): ?array
     {
@@ -124,7 +121,6 @@ final readonly class UsercentricsLibrary
         $settings = $site->getSettings();
         $settingsId = $settings->get('plugin.tx_usercentrics.settingsId');
         if (!is_string($settingsId)) {
-            // Site set is not included for this site.
             return null;
         }
 
@@ -137,7 +133,7 @@ final readonly class UsercentricsLibrary
 
         return [
             'settingsId' => $settingsId,
-            'language' => (string)$language,
+            'language' => $language,
             'jsFiles' => (array)($settings->get('plugin.tx_usercentrics.jsFiles') ?? []),
             'jsInline' => (array)($settings->get('plugin.tx_usercentrics.jsInline') ?? []),
         ];
@@ -161,8 +157,8 @@ final readonly class UsercentricsLibrary
     }
 
     /**
-     * Deliberately not using ApplicationType::fromRequest(), which throws for requests
-     * that are neither frontend nor backend, for example CLI requests.
+     * Deliberately not using ApplicationType::fromRequest(), which throws an exception for requests
+     * that are neither FE nor BE, for example CLI requests.
      */
     private function isFrontendRequest(ServerRequestInterface $request): bool
     {

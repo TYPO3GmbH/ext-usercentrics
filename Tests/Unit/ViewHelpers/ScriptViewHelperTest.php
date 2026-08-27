@@ -46,7 +46,7 @@ final class ScriptViewHelperTest extends UnitTestCase
                 'type' => 'text/plain',
                 'data-usercentrics' => 'My Service',
             ],
-            'options' => ['priority' => false],
+            'options' => ['priority' => false, $this->getCspKey() => false],
         ], $assetCollector->getJavaScripts()['my-script']);
         self::assertSame([], $assetCollector->getInlineJavaScripts());
     }
@@ -68,7 +68,7 @@ final class ScriptViewHelperTest extends UnitTestCase
                 'type' => 'text/plain',
                 'data-usercentrics' => 'My Service',
             ],
-            'options' => ['priority' => false],
+            'options' => ['priority' => false, $this->getCspKey() => false],
         ], $assetCollector->getInlineJavaScripts()['my-inline']);
         self::assertSame([], $assetCollector->getJavaScripts());
     }
@@ -197,13 +197,9 @@ final class ScriptViewHelperTest extends UnitTestCase
             'priority' => true,
         ]);
 
-        self::assertSame(['priority' => true], $assetCollector->getJavaScripts()['my-script']['options']);
+        self::assertSame(['priority' => true, $this->getCspKey() => false], $assetCollector->getJavaScripts()['my-script']['options']);
     }
 
-    /**
-     * TYPO3 v14 deprecated the "useNonce" option in favour of "csp", so the option key
-     * has to follow the major the extension is running on.
-     */
     #[Test]
     public function nonceOptionMatchesTheRunningTypo3Major(): void
     {
@@ -211,10 +207,10 @@ final class ScriptViewHelperTest extends UnitTestCase
             'identifier' => 'my-script',
             'dataProcessingService' => 'My Service',
             'src' => 'my.js',
-            'useNonce' => true,
+            $this->getCspKey() => true,
         ]);
 
-        $expectedKey = (new Typo3Version())->getMajorVersion() >= 14 ? 'csp' : 'useNonce';
+        $expectedKey = $this->getCspKey();
         self::assertSame(
             ['priority' => false, $expectedKey => true],
             $assetCollector->getJavaScripts()['my-script']['options']
@@ -310,18 +306,22 @@ final class ScriptViewHelperTest extends UnitTestCase
     ): AssetCollector {
         $assetCollector ??= new AssetCollector();
 
-        $viewHelper = new ScriptViewHelper();
-        $viewHelper->injectAssetCollector($assetCollector);
+        $viewHelper = new ScriptViewHelper($assetCollector);
         $viewHelper->setRenderChildrenClosure(static fn (): string => (string)$children);
         if ($additionalArguments !== []) {
             $viewHelper->handleAdditionalArguments($additionalArguments);
         }
         // setArguments() bypasses Fluid's default handling, so every argument the
         // ViewHelper reads unconditionally has to be provided here.
-        $viewHelper->setArguments($arguments + ['priority' => false, 'useNonce' => false]);
+        $viewHelper->setArguments($arguments + ['priority' => false, $this->getCspKey() => false]);
         $viewHelper->initialize();
         $viewHelper->render();
 
         return $assetCollector;
+    }
+
+    public function getCspKey(): string
+    {
+        return (new Typo3Version())->getMajorVersion() >= 14 ? 'csp' : 'useNonce';
     }
 }

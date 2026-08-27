@@ -45,8 +45,7 @@ class ScriptViewHelper extends AbstractTagBasedViewHelper
     protected $tagName = 'script';
 
     /**
-     * Attributes that are forwarded to the script tag. Registered as plain arguments
-     * because registerTagAttribute() was removed with Fluid 5 (TYPO3 v14).
+     * Attributes that are forwarded to the script tag.
      */
     private const SCRIPT_ATTRIBUTES = [
         'async',
@@ -60,17 +59,13 @@ class ScriptViewHelper extends AbstractTagBasedViewHelper
         'type',
     ];
 
-    protected AssetCollector $assetCollector;
-
-    public function injectAssetCollector(AssetCollector $assetCollector): void
+    public function __construct(protected AssetCollector $assetCollector)
     {
-        $this->assetCollector = $assetCollector;
+        parent::__construct();
     }
 
     public function initialize(): void
     {
-        // Add a tag builder, that does not html encode values, because rendering with encoding happens in AssetRenderer.
-        // The signature is intentionally untyped to stay compatible with both Fluid 4 (TYPO3 v13) and Fluid 5 (TYPO3 v14).
         $this->setTagBuilder(
             new class() extends TagBuilder {
                 public function addAttribute($attributeName, $attributeValue, $escapeSpecialCharacters = false): void
@@ -99,7 +94,8 @@ class ScriptViewHelper extends AbstractTagBasedViewHelper
         $this->registerArgument('referrerpolicy', 'string', 'Define which referrer is sent when fetching the resource.');
         $this->registerArgument('src', 'string', 'Define the URI of the external resource.');
         $this->registerArgument('type', 'string', 'Define the MIME type (usually \'text/javascript\').');
-        $this->registerArgument('useNonce', 'bool', 'Whether to use the global nonce value', false, false);
+        $this->registerArgument('useNonce', 'mixed', 'Whether to use the global nonce value');
+        $this->registerArgument('csp', 'bool', 'Whether to collect a CSP hash value for this asset', false, false);
         $this->registerArgument(
             'identifier',
             'string',
@@ -119,20 +115,29 @@ class ScriptViewHelper extends AbstractTagBasedViewHelper
     public function render(): string
     {
         $dataProcessingService = $this->getDataProcessingService();
-        // The identifier is what makes the AssetCollector inject a script only once,
-        // even if the ViewHelper is called multiple times with the same identifier.
-        $identifier = (string)$this->arguments['identifier'];
+        $identifier = $this->arguments['identifier'];
         $attributes = $this->tag->getAttributes();
         $attributes['type'] = 'text/plain';
         $attributes['data-usercentrics'] = $dataProcessingService;
         $src = $this->tag->getAttribute('src');
         unset($attributes['src']);
         $options = [
-            'priority' => (bool)$this->arguments['priority'],
+            'priority' => $this->arguments['priority'],
         ];
-        if ($this->arguments['useNonce']) {
-            // The "useNonce" option is deprecated in favour of "csp" as of TYPO3 v14.
-            $options[$this->isTypo3Version14OrHigher() ? 'csp' : 'useNonce'] = true;
+        // backwards compatibility for useNonce argument in v14
+        if (isset($this->arguments['useNonce']) && $this->arguments['useNonce'] !== null) {
+            $useNonce = filter_var($this->arguments['useNonce'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($this->isTypo3Version14OrHigher()) {
+                trigger_error(
+                    'Using the \'useNonce\' attribute on <usercentrics:script> is deprecated in TYPO3 v14. Please use the \'csp\' attribute instead.',
+                    E_USER_DEPRECATED
+                );
+                $options['csp'] = $useNonce;
+            } else {
+                $options['useNonce'] = $useNonce;
+            }
+        } else {
+            $options['csp'] = $this->arguments['csp'];
         }
         if ($src !== null) {
             $this->assetCollector->addJavaScript($identifier, html_entity_decode($src), $attributes, $options);

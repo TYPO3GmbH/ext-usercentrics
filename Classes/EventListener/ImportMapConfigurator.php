@@ -18,10 +18,8 @@ class ImportMapConfigurator
     #[AsEventListener]
     public function __invoke(ResolveJavaScriptImportEvent $event): void
     {
-        // The settings editor resolves a settings type module by its bare specifier at
-        // runtime, but TYPO3 does not add third party settings types to the import map on
-        // its own (neither in v13 nor in v14). Registering the import alongside the editor
-        // module is what makes the dynamic import resolvable.
+        // TYPO3 does not provide a way to add custom settings types yet.
+        // Therefore, this event listener is used for now.
         if ($event->specifier === '@typo3/backend/settings/editor.js') {
             $event->importMap->includeImportsFor('@t3g/usercentrics/settings/type/uc-file.js');
         }
